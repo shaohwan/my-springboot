@@ -5,9 +5,9 @@ import com.demo.daniel.model.PersonRequest;
 import com.demo.daniel.model.Response;
 import com.demo.daniel.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/person")
@@ -24,8 +24,10 @@ public class PersonController {
     }
 
     @GetMapping
-    public Response<List<Person>> getAllPersons() {
-        List<Person> persons = personService.getAllPersons();
+    public Response<Page<Person>> getAllPersons(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<Person> persons = personService.getAllPersons(PageRequest.of(page, size));
         return Response.success(persons);
     }
 }

@@ -4,9 +4,10 @@ import com.demo.daniel.entity.Person;
 import com.demo.daniel.model.PersonRequest;
 import com.demo.daniel.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,8 +25,8 @@ public class PersonService {
         return personRepository.findById(id);
     }
 
-    public List<Person> getAllPersons() {
-        return personRepository.findAll();
+    public Page<Person> getAllPersons(Pageable pageable) {
+        return personRepository.findAll(pageable);
     }
 
     public Optional<Person> updatePerson(String id, String name, String password, String email) {
