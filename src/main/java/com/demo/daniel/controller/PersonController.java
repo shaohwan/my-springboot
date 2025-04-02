@@ -26,8 +26,11 @@ public class PersonController {
     @GetMapping
     public Response<Page<Person>> getAllPersons(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<Person> persons = personService.getAllPersons(PageRequest.of(page, size));
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone) {
+        Page<Person> persons = personService.getAllPersons(PageRequest.of(page, size), name, email, phone);
         return Response.success(persons);
     }
 }
