@@ -3,7 +3,7 @@ package com.demo.daniel.model;
 import lombok.Data;
 
 @Data
-public class PersonRequest {
+public class PersonCreateDTO {
 
     private String name;
 

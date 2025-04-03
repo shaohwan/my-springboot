@@ -1,7 +1,7 @@
 package com.demo.daniel.service;
 
 import com.demo.daniel.entity.Person;
-import com.demo.daniel.model.PersonRequest;
+import com.demo.daniel.model.PersonCreateDTO;
 import com.demo.daniel.repository.PersonRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public Person createPerson(PersonRequest request) {
+    public Person createPerson(PersonCreateDTO request) {
         Person person = Person.builder().name(request.getName()).password(request.getPassword()).email(request.getEmail()).phone(request.getPhone()).build();
         return personRepository.save(person);
     }
