@@ -1,5 +1,7 @@
 package com.demo.daniel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +28,7 @@ public class Permission {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "code", nullable = false, unique = true)
+    @Column(name = "code", unique = true)
     private String code;
 
     @Enumerated(EnumType.STRING)
@@ -44,10 +46,12 @@ public class Permission {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
+    @JsonBackReference
     private Permission parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     @OrderBy("order_num ASC")
+    @JsonManagedReference
     private List<Permission> children = new ArrayList<>();
 
     @Column(name = "order_num")
@@ -60,8 +64,4 @@ public class Permission {
     @UpdateTimestamp
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-
-    public enum PermissionType {
-        MENU, BUTTON
-    }
 }
