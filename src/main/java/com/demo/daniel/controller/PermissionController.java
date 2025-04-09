@@ -46,7 +46,7 @@ public class PermissionController {
     public GenericResponse<String> deletePermission(@PathVariable Long id) {
         try {
             permissionService.deletePermission(id);
-            return GenericResponse.success("删除成功");
+            return GenericResponse.success(null, "删除成功");
         } catch (IllegalStateException e) {
             return GenericResponse.error(400, e.getMessage());
         } catch (IllegalArgumentException e) {

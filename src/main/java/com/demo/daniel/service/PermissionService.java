@@ -26,6 +26,10 @@ public class PermissionService {
     @Autowired
     private RoleRepository roleRepository;
 
+    public List<Permission> getPermissionByIds(List<Long> permissionIds) {
+        return permissionRepository.findAllById(permissionIds);
+    }
+
     public List<Permission> getMenuTreeByUsername(String username) {
         List<Permission> allPermissions;
 
