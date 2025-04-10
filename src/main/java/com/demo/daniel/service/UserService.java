@@ -67,4 +67,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         userRepository.delete(user);
     }
+
+    public UserVO login(String name, String password) {
+        return userRepository.findByUsernameAndPassword(name, password).map(user -> {
+            UserVO userVO = new UserVO();
+            BeanUtils.copyProperties(user, userVO);
+            return userVO;
+        }).orElseThrow(() -> new RuntimeException("用户名或者密码错误！"));
+    }
 }
