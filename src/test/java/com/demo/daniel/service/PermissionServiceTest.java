@@ -25,42 +25,103 @@ public class PermissionServiceTest {
 
     @Test
     public void testAddPermission() {
-        Permission permissionMenu = new Permission();
-        permissionMenu.setName("权限管理");
-        permissionMenu.setType(PermissionType.MENU);
-        permissionMenu.setPath("/home");
-        permissionMenu.setComponent("components/Home.vue");
-        permissionMenu.setIcon("p");
-        permissionRepository.save(permissionMenu);
+        Permission root = new Permission();
+        root.setName("权限管理");
+        root.setType(PermissionType.MENU);
+        permissionRepository.save(root);
 
         Permission userMenu = new Permission();
         userMenu.setName("用户管理");
         userMenu.setType(PermissionType.MENU);
-        userMenu.setPath("/person");
-        userMenu.setComponent("components/Person.vue");
-        userMenu.setIcon("user");
-        userMenu.setParent(permissionMenu);
+        userMenu.setPath("/user");
+        userMenu.setComponent("components/User");
+        userMenu.setParent(root);
         permissionRepository.save(userMenu);
 
-        // 初始化按钮权限
-        Permission searchBtn = new Permission();
-        searchBtn.setName("查询");
-        searchBtn.setCode("user:search");
-        searchBtn.setType(PermissionType.BUTTON);
-        searchBtn.setParent(userMenu);
-        permissionRepository.save(searchBtn);
+        Permission userAddBtn = new Permission();
+        userAddBtn.setName("新增");
+        userAddBtn.setCode("user:add");
+        userAddBtn.setType(PermissionType.BUTTON);
+        userAddBtn.setParent(userMenu);
+        permissionRepository.save(userAddBtn);
 
-        Permission resetBtn = new Permission();
-        resetBtn.setName("重置");
-        resetBtn.setCode("user:reset");
-        resetBtn.setType(PermissionType.BUTTON);
-        resetBtn.setParent(userMenu);
-        permissionRepository.save(resetBtn);
+        Permission userEditBtn = new Permission();
+        userEditBtn.setName("编辑");
+        userEditBtn.setCode("user:edit");
+        userEditBtn.setType(PermissionType.BUTTON);
+        userEditBtn.setParent(userMenu);
+        permissionRepository.save(userEditBtn);
+
+        Permission userDeleteBtn = new Permission();
+        userDeleteBtn.setName("删除");
+        userDeleteBtn.setCode("user:delete");
+        userDeleteBtn.setType(PermissionType.BUTTON);
+        userDeleteBtn.setParent(userMenu);
+        permissionRepository.save(userDeleteBtn);
+
+        Permission roleMenu = new Permission();
+        roleMenu.setName("角色管理");
+        roleMenu.setType(PermissionType.MENU);
+        roleMenu.setPath("/role");
+        roleMenu.setComponent("components/Role");
+        roleMenu.setParent(root);
+        permissionRepository.save(roleMenu);
+
+        Permission roleAddBtn = new Permission();
+        roleAddBtn.setName("新增");
+        roleAddBtn.setCode("role:add");
+        roleAddBtn.setType(PermissionType.BUTTON);
+        roleAddBtn.setParent(roleMenu);
+        permissionRepository.save(roleAddBtn);
+
+        Permission roleEditBtn = new Permission();
+        roleEditBtn.setName("编辑");
+        roleEditBtn.setCode("role:edit");
+        roleEditBtn.setType(PermissionType.BUTTON);
+        roleEditBtn.setParent(roleMenu);
+        permissionRepository.save(roleEditBtn);
+
+        Permission roleDeleteBtn = new Permission();
+        roleDeleteBtn.setName("删除");
+        roleDeleteBtn.setCode("role:delete");
+        roleDeleteBtn.setType(PermissionType.BUTTON);
+        roleDeleteBtn.setParent(roleMenu);
+        permissionRepository.save(roleDeleteBtn);
+
+        Permission permissionMenu = new Permission();
+        permissionMenu.setName("菜单管理");
+        permissionMenu.setType(PermissionType.MENU);
+        permissionMenu.setPath("/permission");
+        permissionMenu.setComponent("components/Permission");
+        permissionMenu.setParent(root);
+        permissionRepository.save(permissionMenu);
+
+        Permission permissionAddBtn = new Permission();
+        permissionAddBtn.setName("新增");
+        permissionAddBtn.setCode("permission:add");
+        permissionAddBtn.setType(PermissionType.BUTTON);
+        permissionAddBtn.setParent(permissionMenu);
+        permissionRepository.save(permissionAddBtn);
+
+        Permission permissionEditBtn = new Permission();
+        permissionEditBtn.setName("编辑");
+        permissionEditBtn.setCode("permission:edit");
+        permissionEditBtn.setType(PermissionType.BUTTON);
+        permissionEditBtn.setParent(permissionMenu);
+        permissionRepository.save(permissionEditBtn);
+
+        Permission permissionDeleteBtn = new Permission();
+        permissionDeleteBtn.setName("删除");
+        permissionDeleteBtn.setCode("permission:delete");
+        permissionDeleteBtn.setType(PermissionType.BUTTON);
+        permissionDeleteBtn.setParent(permissionMenu);
+        permissionRepository.save(permissionDeleteBtn);
 
         // 初始化角色
         Role adminRole = new Role();
         adminRole.setName("管理员");
-        adminRole.setPermissions(Set.of(permissionMenu, userMenu, searchBtn, resetBtn));
+        adminRole.setPermissions(Set.of(root, userMenu, userAddBtn, userEditBtn, userDeleteBtn, roleMenu, roleAddBtn,
+                roleEditBtn, roleDeleteBtn, permissionMenu, permissionAddBtn, permissionEditBtn, permissionDeleteBtn));
         roleRepository.save(adminRole);
 
         User user = new User();
