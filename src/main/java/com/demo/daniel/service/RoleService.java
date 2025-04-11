@@ -1,10 +1,12 @@
 package com.demo.daniel.service;
 
-import com.demo.daniel.entity.Permission;
-import com.demo.daniel.entity.Role;
-import com.demo.daniel.entity.User;
-import com.demo.daniel.model.RoleAddOrUpdateVO;
-import com.demo.daniel.model.RoleVO;
+import com.demo.daniel.model.dto.RoleCreateDTO;
+import com.demo.daniel.model.dto.RoleUpdateDTO;
+import com.demo.daniel.model.entity.Permission;
+import com.demo.daniel.model.entity.Role;
+import com.demo.daniel.model.entity.User;
+import com.demo.daniel.model.vo.RoleDetailVO;
+import com.demo.daniel.model.vo.RoleVO;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -27,51 +29,60 @@ public class RoleService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<RoleVO> getAllRoles() {
+        return roleRepository.findAll().stream().map(role -> {
+            RoleVO roleVO = new RoleVO();
+            BeanUtils.copyProperties(role, roleVO);
+            return roleVO;
+        }).collect(Collectors.toList());
     }
 
-    public RoleVO getRoleById(Long id) {
+    public RoleDetailVO getRoleDetail(Long id) {
         return roleRepository.findById(id)
                 .map(role -> {
-                    RoleVO roleVO = new RoleVO();
-                    BeanUtils.copyProperties(role, roleVO);
+                    RoleDetailVO roleDetailVO = new RoleDetailVO();
+                    BeanUtils.copyProperties(role, roleDetailVO);
                     Optional.ofNullable(role.getPermissions())
                             .ifPresent(permissions ->
-                                    roleVO.setPermissionIds(
+                                    roleDetailVO.setPermissionIds(
                                             permissions.stream()
                                                     .map(Permission::getId)
                                                     .collect(Collectors.toList())
                                     )
                             );
-                    return roleVO;
+                    return roleDetailVO;
                 })
                 .orElseThrow(() -> new RuntimeException("角色不存在"));
     }
 
     @Transactional
-    public void saveRole(RoleAddOrUpdateVO roleAddOrUpdateVO, List<Long> permissionIds) {
-        Role role;
-        if (roleAddOrUpdateVO.getId() == null) {
-            // 新增角色
-            role = new Role();
-        } else {
-            // 编辑角色
-            role = roleRepository.findById(roleAddOrUpdateVO.getId())
-                    .orElseThrow(() -> new RuntimeException("Role not found with id: " + roleAddOrUpdateVO.getId()));
-        }
-        role.setName(roleAddOrUpdateVO.getName());
-        role.setDescription(roleAddOrUpdateVO.getDescription());
+    public void createRole(RoleCreateDTO request) {
+        Role role = new Role();
+        role.setName(request.getName());
+        role.setDescription(request.getDescription());
 
-        // 处理权限
-        if (permissionIds != null) {
-            List<Permission> permissions = permissionService.getPermissionByIds(permissionIds);
+        if (request.getPermissionIds() != null) {
+            List<Permission> permissions = permissionService.getPermissionByIds(request.getPermissionIds());
             role.setPermissions(new HashSet<>(permissions));
         } else {
-            // 如果 permissionIds 为 null，清空权限
             role.setPermissions(new HashSet<>());
         }
+        roleRepository.save(role);
+    }
 
+    @Transactional
+    public void updateRole(RoleUpdateDTO request) {
+        Role role = roleRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("Role not found with id: " + request.getId()));
+        role.setName(request.getName());
+        role.setDescription(request.getDescription());
+
+        if (request.getPermissionIds() != null) {
+            List<Permission> permissions = permissionService.getPermissionByIds(request.getPermissionIds());
+            role.setPermissions(new HashSet<>(permissions));
+        } else {
+            role.setPermissions(new HashSet<>());
+        }
         roleRepository.save(role);
     }
 

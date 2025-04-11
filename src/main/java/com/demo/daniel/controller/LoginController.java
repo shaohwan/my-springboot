@@ -1,7 +1,7 @@
 package com.demo.daniel.controller;
 
-import com.demo.daniel.model.GenericResponse;
-import com.demo.daniel.model.UserVO;
+import com.demo.daniel.model.ApiResponse;
+import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +17,12 @@ public class LoginController {
     private UserService userService;
 
     @GetMapping("/login")
-    public GenericResponse<UserVO> login(@RequestParam("name") String name, @RequestParam("password") String password) {
+    public ApiResponse<UserVO> login(@RequestParam("name") String name, @RequestParam("password") String password) {
         try {
             UserVO userVO = userService.login(name, password);
-            return GenericResponse.success(userVO);
+            return ApiResponse.success(userVO);
         } catch (Exception e) {
-            return GenericResponse.error(500, e.getMessage());
+            return ApiResponse.failure(e.getMessage());
         }
     }
 }

@@ -1,16 +1,16 @@
 package com.demo.daniel.controller;
 
-import com.demo.daniel.entity.Role;
-import com.demo.daniel.model.GenericResponse;
-import com.demo.daniel.model.RoleAddOrUpdateVO;
-import com.demo.daniel.model.RoleVO;
+import com.demo.daniel.model.ApiResponse;
+import com.demo.daniel.model.dto.RoleCreateDTO;
+import com.demo.daniel.model.dto.RoleUpdateDTO;
+import com.demo.daniel.model.vo.RoleDetailVO;
+import com.demo.daniel.model.vo.RoleVO;
 import com.demo.daniel.service.PermissionService;
 import com.demo.daniel.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/role")
@@ -23,30 +23,36 @@ public class RoleController {
     private PermissionService permissionService;
 
     @GetMapping
-    public GenericResponse<List<Role>> getAllRoles() {
-        List<Role> roles = roleService.getAllRoles();
-        return GenericResponse.success(roles, "Operation successful");
+    public ApiResponse<List<RoleVO>> getAllRoles() {
+        List<RoleVO> roles = roleService.getAllRoles();
+        return ApiResponse.success(roles);
     }
 
     @GetMapping("/{id}")
-    public GenericResponse<RoleVO> getRoleById(@PathVariable Long id) {
-        RoleVO role = roleService.getRoleById(id);
-        return GenericResponse.success(role, "Operation successful");
+    public ApiResponse<RoleDetailVO> getRole(@PathVariable Long id) {
+        RoleDetailVO role = roleService.getRoleDetail(id);
+        return ApiResponse.success(role);
     }
 
     @PostMapping
-    public Map<String, Object> saveRole(@RequestBody RoleAddOrUpdateVO roleAddOrUpdateVO) {
-        roleService.saveRole(roleAddOrUpdateVO, roleAddOrUpdateVO.getPermissionIds());
-        return Map.of("success", true, "message", "Role saved successfully");
+    public ApiResponse<Void> createRole(@RequestBody RoleCreateDTO request) {
+        roleService.createRole(request);
+        return ApiResponse.success();
+    }
+
+    @PutMapping
+    public ApiResponse<Void> updateRole(@RequestBody RoleUpdateDTO request) {
+        roleService.updateRole(request);
+        return ApiResponse.success();
     }
 
     @DeleteMapping("/{id}")
-    public GenericResponse<String> deleteRole(@PathVariable Long id) {
+    public ApiResponse<Void> deleteRole(@PathVariable Long id) {
         try {
             roleService.deleteRole(id);
-            return GenericResponse.success(null, "Role deleted successfully");
+            return ApiResponse.success();
         } catch (IllegalStateException e) {
-            return GenericResponse.error(400, e.getMessage());
+            return ApiResponse.failure(e.getMessage());
         }
     }
 }

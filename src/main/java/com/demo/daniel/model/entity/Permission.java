@@ -1,4 +1,4 @@
-package com.demo.daniel.entity;
+package com.demo.daniel.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

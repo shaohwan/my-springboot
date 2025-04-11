@@ -1,15 +1,15 @@
 package com.demo.daniel.controller;
 
-import com.demo.daniel.entity.Permission;
-import com.demo.daniel.model.GenericResponse;
-import com.demo.daniel.model.PermissionAddOrUpdateVO;
-import com.demo.daniel.model.PermissionVO;
+import com.demo.daniel.model.ApiResponse;
+import com.demo.daniel.model.dto.PermissionCreateDTO;
+import com.demo.daniel.model.dto.PermissionUpdateDTO;
+import com.demo.daniel.model.vo.PermissionDetailVO;
+import com.demo.daniel.model.vo.PermissionVO;
 import com.demo.daniel.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -19,40 +19,40 @@ public class PermissionController {
     private PermissionService permissionService;
 
     @GetMapping("/tree")
-    public GenericResponse<List<Permission>> getMenuTree(@RequestParam(required = false) String name) {
-        List<Permission> menuTree = permissionService.getMenuTreeByUsername(name);
-        return GenericResponse.success(menuTree);
+    public ApiResponse<List<PermissionVO>> getMenuTree(@RequestParam(required = false) String name) {
+        List<PermissionVO> menuTree = permissionService.getMenuTreeByUsername(name);
+        return ApiResponse.success(menuTree);
     }
 
     @PostMapping
-    public Map<String, Object> addPermission(@RequestBody PermissionAddOrUpdateVO permissionAddOrUpdateVO) {
-        permissionService.savePermission(permissionAddOrUpdateVO);
-        return Map.of("success", true, "message", "添加成功");
+    public ApiResponse<Void> addPermission(@RequestBody PermissionCreateDTO request) {
+        permissionService.savePermission(request);
+        return ApiResponse.success();
     }
 
     @PutMapping
-    public Map<String, Object> updatePermission(@RequestBody PermissionAddOrUpdateVO permissionAddOrUpdateVO) {
-        permissionService.savePermission(permissionAddOrUpdateVO);
-        return Map.of("success", true, "message", "修改成功");
+    public ApiResponse<Void> updatePermission(@RequestBody PermissionUpdateDTO request) {
+        permissionService.updatePermission(request);
+        return ApiResponse.success();
     }
 
     @GetMapping("/{id}")
-    public GenericResponse<PermissionVO> getPermissionById(@PathVariable Long id) {
-        PermissionVO permission = permissionService.getPermissionById(id);
-        return GenericResponse.success(permission);
+    public ApiResponse<PermissionDetailVO> getPermissionById(@PathVariable Long id) {
+        PermissionDetailVO permission = permissionService.getPermissionById(id);
+        return ApiResponse.success(permission);
     }
 
     @DeleteMapping("/{id}")
-    public GenericResponse<String> deletePermission(@PathVariable Long id) {
+    public ApiResponse<Void> deletePermission(@PathVariable Long id) {
         try {
             permissionService.deletePermission(id);
-            return GenericResponse.success(null, "删除成功");
+            return ApiResponse.success();
         } catch (IllegalStateException e) {
-            return GenericResponse.error(400, e.getMessage());
+            return ApiResponse.failure(e.getMessage());
         } catch (IllegalArgumentException e) {
-            return GenericResponse.error(400, "权限不存在");
+            return ApiResponse.failure("权限不存在");
         } catch (Exception e) {
-            return GenericResponse.error(500, "删除失败");
+            return ApiResponse.failure(500, "删除失败");
         }
     }
 }

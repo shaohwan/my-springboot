@@ -1,10 +1,10 @@
-package com.demo.daniel.model;
+package com.demo.daniel.model.dto;
 
-import com.demo.daniel.entity.PermissionType;
+import com.demo.daniel.model.entity.PermissionType;
 import lombok.Data;
 
 @Data
-public class PermissionAddOrUpdateVO {
+public class PermissionUpdateDTO {
 
     private Long id;
 

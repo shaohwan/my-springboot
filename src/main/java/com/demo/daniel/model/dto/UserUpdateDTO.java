@@ -1,11 +1,11 @@
-package com.demo.daniel.model;
+package com.demo.daniel.model.dto;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class UserAddOrUpdateVO {
+public class UserUpdateDTO {
 
     private Long id;
 

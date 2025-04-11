@@ -1,15 +1,15 @@
 package com.demo.daniel.controller;
 
-import com.demo.daniel.entity.User;
-import com.demo.daniel.model.GenericResponse;
-import com.demo.daniel.model.UserAddOrUpdateVO;
-import com.demo.daniel.model.UserVO;
+import com.demo.daniel.model.ApiResponse;
+import com.demo.daniel.model.dto.UserCreateDTO;
+import com.demo.daniel.model.dto.UserUpdateDTO;
+import com.demo.daniel.model.vo.UserDetailVO;
+import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,30 +19,36 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public GenericResponse<List<User>> getUsers() {
-        List<User> users = userService.getAllUsers();
-        return GenericResponse.success(users, "Operation successful");
+    public ApiResponse<List<UserVO>> getAllUsers() {
+        List<UserVO> users = userService.getAllUsers();
+        return ApiResponse.success(users);
     }
 
     @GetMapping("/{id}")
-    public GenericResponse<UserVO> getUser(@PathVariable Long id) {
-        UserVO user = userService.getUserById(id);
-        return GenericResponse.success(user, "Operation successful");
+    public ApiResponse<UserDetailVO> getUser(@PathVariable Long id) {
+        UserDetailVO user = userService.getUserDetail(id);
+        return ApiResponse.success(user);
     }
 
     @PostMapping
-    public Map<String, Object> saveUser(@RequestBody UserAddOrUpdateVO userAddOrUpdateVO) {
-        userService.saveUser(userAddOrUpdateVO);
-        return Map.of("success", true, "message", "Role saved successfully");
+    public ApiResponse<Void> createUser(@RequestBody UserCreateDTO request) {
+        userService.createUser(request);
+        return ApiResponse.success();
+    }
+
+    @PutMapping
+    public ApiResponse<Void> updateUser(@RequestBody UserUpdateDTO request) {
+        userService.updateUser(request);
+        return ApiResponse.success();
     }
 
     @DeleteMapping("/{id}")
-    public GenericResponse<String> deleteUser(@PathVariable Long id) {
+    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
-            return GenericResponse.success(null, "Role deleted successfully");
+            return ApiResponse.success();
         } catch (Exception e) {
-            return GenericResponse.error(400, e.getMessage());
+            return ApiResponse.failure(e.getMessage());
         }
     }
 }

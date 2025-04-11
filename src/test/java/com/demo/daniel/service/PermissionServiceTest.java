@@ -1,9 +1,9 @@
 package com.demo.daniel.service;
 
-import com.demo.daniel.entity.Permission;
-import com.demo.daniel.entity.PermissionType;
-import com.demo.daniel.entity.Role;
-import com.demo.daniel.entity.User;
+import com.demo.daniel.model.entity.Permission;
+import com.demo.daniel.model.entity.PermissionType;
+import com.demo.daniel.model.entity.Role;
+import com.demo.daniel.model.entity.User;
 import com.demo.daniel.repository.PermissionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;

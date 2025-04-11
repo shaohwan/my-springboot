@@ -1,10 +1,6 @@
-package com.demo.daniel.model;
+package com.demo.daniel.model.vo;
 
-import com.demo.daniel.entity.Role;
 import lombok.Data;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 public class UserVO {
@@ -24,6 +20,4 @@ public class UserVO {
     private String avatar;
 
     private Boolean enabled;
-
-    private Set<Role> roles = new HashSet<>();
 }

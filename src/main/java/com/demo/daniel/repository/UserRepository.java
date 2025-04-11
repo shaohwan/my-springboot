@@ -1,7 +1,7 @@
 package com.demo.daniel.repository;
 
-import com.demo.daniel.entity.Role;
-import com.demo.daniel.entity.User;
+import com.demo.daniel.model.entity.Role;
+import com.demo.daniel.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,13 +1,11 @@
-package com.demo.daniel.model;
+package com.demo.daniel.model.vo;
 
 import lombok.Data;
 
 @Data
-public class PersonCreateDTO {
+public class PersonVO {
 
     private String name;
-
-    private String password;
 
     private String email;
 
