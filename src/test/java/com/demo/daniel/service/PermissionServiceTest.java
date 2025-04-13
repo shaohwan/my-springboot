@@ -28,6 +28,7 @@ public class PermissionServiceTest {
         Permission root = new Permission();
         root.setName("权限管理");
         root.setType(PermissionType.MENU);
+        root.setPath("/home");
         permissionRepository.save(root);
 
         Permission userMenu = new Permission();
