@@ -35,11 +35,8 @@ public class Permission {
     @Column(name = "type", nullable = false)
     private PermissionType type;
 
-    @Column(name = "path")
-    private String path;
-
-    @Column(name = "component")
-    private String component;
+    @Column(name = "url")
+    private String url;
 
     @Column(name = "icon")
     private String icon;

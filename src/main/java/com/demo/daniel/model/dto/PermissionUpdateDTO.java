@@ -14,9 +14,7 @@ public class PermissionUpdateDTO {
 
     private PermissionType type;
 
-    private String path;
-
-    private String component;
+    private String url;
 
     private String icon;
 

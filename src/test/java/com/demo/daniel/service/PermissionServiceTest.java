@@ -28,14 +28,12 @@ public class PermissionServiceTest {
         Permission root = new Permission();
         root.setName("权限管理");
         root.setType(PermissionType.MENU);
-        root.setPath("/home");
         permissionRepository.save(root);
 
         Permission userMenu = new Permission();
         userMenu.setName("用户管理");
         userMenu.setType(PermissionType.MENU);
-        userMenu.setPath("/user");
-        userMenu.setComponent("components/User");
+        userMenu.setUrl("auth/user/index");
         userMenu.setParent(root);
         permissionRepository.save(userMenu);
 
@@ -63,8 +61,7 @@ public class PermissionServiceTest {
         Permission roleMenu = new Permission();
         roleMenu.setName("角色管理");
         roleMenu.setType(PermissionType.MENU);
-        roleMenu.setPath("/role");
-        roleMenu.setComponent("components/Role");
+        roleMenu.setUrl("auth/role/index");
         roleMenu.setParent(root);
         permissionRepository.save(roleMenu);
 
@@ -92,8 +89,7 @@ public class PermissionServiceTest {
         Permission permissionMenu = new Permission();
         permissionMenu.setName("菜单管理");
         permissionMenu.setType(PermissionType.MENU);
-        permissionMenu.setPath("/permission");
-        permissionMenu.setComponent("components/Permission");
+        permissionMenu.setUrl("auth/permission/index");
         permissionMenu.setParent(root);
         permissionRepository.save(permissionMenu);
 
