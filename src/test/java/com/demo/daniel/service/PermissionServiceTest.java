@@ -28,6 +28,7 @@ public class PermissionServiceTest {
         Permission root = new Permission();
         root.setName("权限管理");
         root.setType(PermissionType.MENU);
+        root.setOrderNum(0);
         permissionRepository.save(root);
 
         Permission userMenu = new Permission();
@@ -35,6 +36,7 @@ public class PermissionServiceTest {
         userMenu.setType(PermissionType.MENU);
         userMenu.setUrl("auth/user/index");
         userMenu.setParent(root);
+        userMenu.setOrderNum(0);
         permissionRepository.save(userMenu);
 
         Permission userAddBtn = new Permission();
@@ -42,6 +44,7 @@ public class PermissionServiceTest {
         userAddBtn.setCode("user:add");
         userAddBtn.setType(PermissionType.BUTTON);
         userAddBtn.setParent(userMenu);
+        userAddBtn.setOrderNum(0);
         permissionRepository.save(userAddBtn);
 
         Permission userEditBtn = new Permission();
@@ -49,6 +52,7 @@ public class PermissionServiceTest {
         userEditBtn.setCode("user:edit");
         userEditBtn.setType(PermissionType.BUTTON);
         userEditBtn.setParent(userMenu);
+        userEditBtn.setOrderNum(1);
         permissionRepository.save(userEditBtn);
 
         Permission userDeleteBtn = new Permission();
@@ -56,6 +60,7 @@ public class PermissionServiceTest {
         userDeleteBtn.setCode("user:delete");
         userDeleteBtn.setType(PermissionType.BUTTON);
         userDeleteBtn.setParent(userMenu);
+        userDeleteBtn.setOrderNum(2);
         permissionRepository.save(userDeleteBtn);
 
         Permission roleMenu = new Permission();
@@ -63,6 +68,7 @@ public class PermissionServiceTest {
         roleMenu.setType(PermissionType.MENU);
         roleMenu.setUrl("auth/role/index");
         roleMenu.setParent(root);
+        roleMenu.setOrderNum(1);
         permissionRepository.save(roleMenu);
 
         Permission roleAddBtn = new Permission();
@@ -70,6 +76,7 @@ public class PermissionServiceTest {
         roleAddBtn.setCode("role:add");
         roleAddBtn.setType(PermissionType.BUTTON);
         roleAddBtn.setParent(roleMenu);
+        roleAddBtn.setOrderNum(0);
         permissionRepository.save(roleAddBtn);
 
         Permission roleEditBtn = new Permission();
@@ -77,6 +84,7 @@ public class PermissionServiceTest {
         roleEditBtn.setCode("role:edit");
         roleEditBtn.setType(PermissionType.BUTTON);
         roleEditBtn.setParent(roleMenu);
+        roleEditBtn.setOrderNum(1);
         permissionRepository.save(roleEditBtn);
 
         Permission roleDeleteBtn = new Permission();
@@ -84,6 +92,7 @@ public class PermissionServiceTest {
         roleDeleteBtn.setCode("role:delete");
         roleDeleteBtn.setType(PermissionType.BUTTON);
         roleDeleteBtn.setParent(roleMenu);
+        roleDeleteBtn.setOrderNum(2);
         permissionRepository.save(roleDeleteBtn);
 
         Permission permissionMenu = new Permission();
@@ -91,6 +100,7 @@ public class PermissionServiceTest {
         permissionMenu.setType(PermissionType.MENU);
         permissionMenu.setUrl("auth/permission/index");
         permissionMenu.setParent(root);
+        permissionMenu.setOrderNum(2);
         permissionRepository.save(permissionMenu);
 
         Permission permissionAddBtn = new Permission();
@@ -98,6 +108,7 @@ public class PermissionServiceTest {
         permissionAddBtn.setCode("permission:add");
         permissionAddBtn.setType(PermissionType.BUTTON);
         permissionAddBtn.setParent(permissionMenu);
+        permissionAddBtn.setOrderNum(0);
         permissionRepository.save(permissionAddBtn);
 
         Permission permissionEditBtn = new Permission();
@@ -105,6 +116,7 @@ public class PermissionServiceTest {
         permissionEditBtn.setCode("permission:edit");
         permissionEditBtn.setType(PermissionType.BUTTON);
         permissionEditBtn.setParent(permissionMenu);
+        permissionEditBtn.setOrderNum(1);
         permissionRepository.save(permissionEditBtn);
 
         Permission permissionDeleteBtn = new Permission();
@@ -112,6 +124,7 @@ public class PermissionServiceTest {
         permissionDeleteBtn.setCode("permission:delete");
         permissionDeleteBtn.setType(PermissionType.BUTTON);
         permissionDeleteBtn.setParent(permissionMenu);
+        permissionDeleteBtn.setOrderNum(2);
         permissionRepository.save(permissionDeleteBtn);
 
         // 初始化角色
