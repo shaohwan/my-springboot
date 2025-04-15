@@ -1,5 +1,7 @@
 package com.demo.daniel.service;
 
+import com.demo.daniel.exception.BusinessException;
+import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.PermissionCreateDTO;
 import com.demo.daniel.model.dto.PermissionUpdateDTO;
 import com.demo.daniel.model.entity.Permission;
@@ -39,7 +41,7 @@ public class PermissionService {
             allPermissions = permissionRepository.findAll();
         } else {
             User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("用户不存在"));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + username));
 
             allPermissions = user.getRoles().stream()
                     .flatMap(role -> role.getPermissions().stream())
@@ -92,7 +94,7 @@ public class PermissionService {
         Permission permission = new Permission();
         if (request.getParentId() != null) {
             Permission parent = permissionRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new RuntimeException("父权限不存在"));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "父权限不存在"));
             permission.setParent(parent);
         } else {
             permission.setParent(null);
@@ -103,10 +105,10 @@ public class PermissionService {
 
     public void updatePermission(PermissionUpdateDTO request) {
         Permission permission = permissionRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("权限不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "权限不存在"));
         if (request.getParentId() != null) {
             Permission parent = permissionRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new RuntimeException("父权限不存在"));
+                    .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "父权限不存在"));
             permission.setParent(parent);
         } else {
             permission.setParent(null);
@@ -118,7 +120,7 @@ public class PermissionService {
     @Transactional
     public void deletePermission(Long id) {
         Permission permission = permissionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("权限不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "权限不存在"));
 
         // 获取所有子权限（递归）
         List<Permission> allPermissions = new ArrayList<>();
@@ -130,7 +132,7 @@ public class PermissionService {
             String associatedNames = associatedPermissions.stream()
                     .map(Permission::getName)
                     .collect(Collectors.joining(", "));
-            throw new IllegalStateException("权限或其子权限（" + associatedNames + "）已被角色关联，无法删除");
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "权限或其子权限（" + associatedNames + "）已被角色关联，无法删除");
         }
 
         // 删除权限及其子权限
@@ -175,6 +177,6 @@ public class PermissionService {
                     BeanUtils.copyProperties(permission, permissionDetailVO);
                     return permissionDetailVO;
                 })
-                .orElseThrow(() -> new RuntimeException("权限不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), "权限不存在"));
     }
 }

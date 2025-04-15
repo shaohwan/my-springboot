@@ -18,11 +18,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public ApiResponse<UserVO> login(@RequestParam("name") String name, @RequestParam("password") String password) {
-        try {
-            UserVO userVO = userService.login(name, password);
-            return ApiResponse.success(userVO);
-        } catch (Exception e) {
-            return ApiResponse.failure(e.getMessage());
-        }
+        UserVO userVO = userService.login(name, password);
+        return ApiResponse.ok(userVO);
     }
 }

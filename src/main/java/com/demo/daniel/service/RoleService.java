@@ -1,5 +1,7 @@
 package com.demo.daniel.service;
 
+import com.demo.daniel.exception.BusinessException;
+import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.RoleCreateDTO;
 import com.demo.daniel.model.dto.RoleUpdateDTO;
 import com.demo.daniel.model.entity.Permission;
@@ -52,7 +54,7 @@ public class RoleService {
                             );
                     return roleDetailVO;
                 })
-                .orElseThrow(() -> new RuntimeException("角色不存在"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + id));
     }
 
     @Transactional
@@ -73,7 +75,7 @@ public class RoleService {
     @Transactional
     public void updateRole(RoleUpdateDTO request) {
         Role role = roleRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + request.getId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + request.getId()));
         role.setName(request.getName());
         role.setDescription(request.getDescription());
 
@@ -89,12 +91,13 @@ public class RoleService {
     @Transactional
     public void deleteRole(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + id));
 
         List<User> usersWithRole = userRepository.findByRolesContaining(role);
 
         if (!usersWithRole.isEmpty()) {
-            throw new IllegalStateException("无法删除角色 " + role.getName() + " 因为它已被 " + usersWithRole.size() + " 个用户使用!");
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
+                    "无法删除角色 " + role.getName() + " 因为它已被 " + usersWithRole.size() + " 个用户使用!");
         }
         roleRepository.deleteById(id);
     }

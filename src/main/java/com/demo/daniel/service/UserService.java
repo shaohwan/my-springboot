@@ -1,5 +1,7 @@
 package com.demo.daniel.service;
 
+import com.demo.daniel.exception.BusinessException;
+import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.UserCreateDTO;
 import com.demo.daniel.model.dto.UserUpdateDTO;
 import com.demo.daniel.model.entity.Role;
@@ -40,7 +42,7 @@ public class UserService {
                     BeanUtils.copyProperties(user, userDetailVO);
                     return userDetailVO;
                 })
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + id));
     }
 
     @Transactional
@@ -66,7 +68,7 @@ public class UserService {
     @Transactional
     public void updateUser(UserUpdateDTO request) {
         User user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + request.getId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + request.getId()));
 
         user.setUsername(request.getUsername());
         user.setRealName(request.getRealName());
@@ -86,7 +88,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + id));
         userRepository.delete(user);
     }
 
@@ -95,6 +97,6 @@ public class UserService {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
             return userVO;
-        }).orElseThrow(() -> new RuntimeException("用户名或者密码错误！"));
+        }).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS.getCode(), ErrorCode.INVALID_CREDENTIALS.getMessage()));
     }
 }

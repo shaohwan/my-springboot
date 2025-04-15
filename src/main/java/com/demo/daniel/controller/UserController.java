@@ -21,34 +21,34 @@ public class UserController {
     @GetMapping
     public ApiResponse<List<UserVO>> getAllUsers() {
         List<UserVO> users = userService.getAllUsers();
-        return ApiResponse.success(users);
+        return ApiResponse.ok(users);
     }
 
     @GetMapping("/{id}")
     public ApiResponse<UserDetailVO> getUser(@PathVariable Long id) {
         UserDetailVO user = userService.getUserDetail(id);
-        return ApiResponse.success(user);
+        return ApiResponse.ok(user);
     }
 
     @PostMapping
     public ApiResponse<Void> createUser(@RequestBody UserCreateDTO request) {
         userService.createUser(request);
-        return ApiResponse.success();
+        return ApiResponse.ok();
     }
 
     @PutMapping
     public ApiResponse<Void> updateUser(@RequestBody UserUpdateDTO request) {
         userService.updateUser(request);
-        return ApiResponse.success();
+        return ApiResponse.ok();
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
-            return ApiResponse.success();
+            return ApiResponse.ok();
         } catch (Exception e) {
-            return ApiResponse.failure(e.getMessage());
+            return ApiResponse.error(e.getMessage());
         }
     }
 }

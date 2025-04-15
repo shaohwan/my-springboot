@@ -11,33 +11,33 @@ public class ApiResponse<T> {
     private ApiResponse() {
     }
 
-    public static <T> ApiResponse<T> success() {
-        return success(null);
+    public static <T> ApiResponse<T> ok() {
+        return ok(null);
     }
 
-    public static <T> ApiResponse<T> success(T data) {
+    public static <T> ApiResponse<T> ok(T data) {
         ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(ResponseCode.SUCCESS.getCode());
-        response.setMessage(ResponseCode.SUCCESS.getMessage());
+        response.setCode(ErrorCode.SUCCESS.getCode());
+        response.setMessage(ErrorCode.SUCCESS.getMessage());
         response.setData(data);
         return response;
     }
 
-    public static <T> ApiResponse<T> failure() {
-        return failure(ResponseCode.FAILURE);
+    public static <T> ApiResponse<T> error() {
+        return error(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 
-    public static <T> ApiResponse<T> failure(ResponseCode responseCode) {
-        return failure(responseCode.getCode(), responseCode.getMessage());
+    public static <T> ApiResponse<T> error(ErrorCode errorCode) {
+        return error(errorCode.getCode(), errorCode.getMessage());
     }
 
-    public static <T> ApiResponse<T> failure(String message) {
-        return failure(ResponseCode.FAILURE.getCode(), message);
+    public static <T> ApiResponse<T> error(String message) {
+        return error(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), message);
     }
 
-    public static <T> ApiResponse<T> failure(int statusCode, String message) {
+    public static <T> ApiResponse<T> error(int errorCode, String message) {
         ApiResponse<T> response = new ApiResponse<>();
-        response.setCode(statusCode);
+        response.setCode(errorCode);
         response.setMessage(message);
         return response;
     }

@@ -25,34 +25,30 @@ public class RoleController {
     @GetMapping
     public ApiResponse<List<RoleVO>> getAllRoles() {
         List<RoleVO> roles = roleService.getAllRoles();
-        return ApiResponse.success(roles);
+        return ApiResponse.ok(roles);
     }
 
     @GetMapping("/{id}")
     public ApiResponse<RoleDetailVO> getRole(@PathVariable Long id) {
         RoleDetailVO role = roleService.getRoleDetail(id);
-        return ApiResponse.success(role);
+        return ApiResponse.ok(role);
     }
 
     @PostMapping
     public ApiResponse<Void> createRole(@RequestBody RoleCreateDTO request) {
         roleService.createRole(request);
-        return ApiResponse.success();
+        return ApiResponse.ok();
     }
 
     @PutMapping
     public ApiResponse<Void> updateRole(@RequestBody RoleUpdateDTO request) {
         roleService.updateRole(request);
-        return ApiResponse.success();
+        return ApiResponse.ok();
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteRole(@PathVariable Long id) {
-        try {
-            roleService.deleteRole(id);
-            return ApiResponse.success();
-        } catch (IllegalStateException e) {
-            return ApiResponse.failure(e.getMessage());
-        }
+        roleService.deleteRole(id);
+        return ApiResponse.ok();
     }
 }
