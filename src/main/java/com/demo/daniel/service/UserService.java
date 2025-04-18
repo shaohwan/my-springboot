@@ -12,13 +12,13 @@ import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -28,12 +28,12 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public List<UserVO> getAllUsers() {
-        return userRepository.findAll().stream().map(user -> {
+    public Page<UserVO> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(user -> {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
             return userVO;
-        }).collect(Collectors.toList());
+        });
     }
 
     public UserDetailVO getUserDetail(Long id) {
