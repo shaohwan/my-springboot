@@ -2,15 +2,15 @@ package com.demo.daniel.controller;
 
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.RoleCreateDTO;
+import com.demo.daniel.model.dto.RoleQueryDTO;
 import com.demo.daniel.model.dto.RoleUpdateDTO;
 import com.demo.daniel.model.vo.RoleDetailVO;
 import com.demo.daniel.model.vo.RoleVO;
 import com.demo.daniel.service.PermissionService;
 import com.demo.daniel.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/role")
@@ -23,8 +23,8 @@ public class RoleController {
     private PermissionService permissionService;
 
     @GetMapping
-    public ApiResponse<List<RoleVO>> getAllRoles() {
-        List<RoleVO> roles = roleService.getAllRoles();
+    public ApiResponse<Page<RoleVO>> getAllRoles(@ModelAttribute RoleQueryDTO request) {
+        Page<RoleVO> roles = roleService.getAllRoles(request);
         return ApiResponse.ok(roles);
     }
 

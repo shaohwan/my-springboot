@@ -3,6 +3,7 @@ package com.demo.daniel.service;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.RoleCreateDTO;
+import com.demo.daniel.model.dto.RoleQueryDTO;
 import com.demo.daniel.model.dto.RoleUpdateDTO;
 import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.Role;
@@ -11,8 +12,12 @@ import com.demo.daniel.model.vo.RoleDetailVO;
 import com.demo.daniel.model.vo.RoleVO;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
+import com.demo.daniel.util.RoleSpecifications;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,12 +36,13 @@ public class RoleService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<RoleVO> getAllRoles() {
-        return roleRepository.findAll().stream().map(role -> {
+    public Page<RoleVO> getAllRoles(RoleQueryDTO request) {
+        Specification<Role> spec = RoleSpecifications.buildSpecification(request.getName());
+        return roleRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize())).map(role -> {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(role, roleVO);
             return roleVO;
-        }).collect(Collectors.toList());
+        });
     }
 
     public RoleDetailVO getRoleDetail(Long id) {
