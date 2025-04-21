@@ -2,13 +2,13 @@ package com.demo.daniel.controller;
 
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.UserCreateDTO;
+import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpdateDTO;
 import com.demo.daniel.model.vo.UserDetailVO;
 import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +19,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ApiResponse<Page<UserVO>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<UserVO> users = userService.getAllUsers(PageRequest.of(page, size));
+    public ApiResponse<Page<UserVO>> getAllUsers(@ModelAttribute UserQueryDTO request) {
+        Page<UserVO> users = userService.getAllUsers(request);
         return ApiResponse.ok(users);
     }
 

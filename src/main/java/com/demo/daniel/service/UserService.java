@@ -3,6 +3,7 @@ package com.demo.daniel.service;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.UserCreateDTO;
+import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpdateDTO;
 import com.demo.daniel.model.entity.Role;
 import com.demo.daniel.model.entity.User;
@@ -10,10 +11,12 @@ import com.demo.daniel.model.vo.UserDetailVO;
 import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
+import com.demo.daniel.util.UserSpecifications;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +31,9 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public Page<UserVO> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(user -> {
+    public Page<UserVO> getAllUsers(UserQueryDTO request) {
+        Specification<User> spec = UserSpecifications.buildSpecification(request.getUsername(), request.getEmail());
+        return userRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize())).map(user -> {
             UserVO userVO = new UserVO();
             BeanUtils.copyProperties(user, userVO);
             return userVO;
