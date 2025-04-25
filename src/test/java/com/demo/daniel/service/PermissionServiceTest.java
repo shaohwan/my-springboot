@@ -63,6 +63,22 @@ public class PermissionServiceTest {
         userDeleteBtn.setOrderNum(2);
         permissionRepository.save(userDeleteBtn);
 
+        Permission userSearchBtn = new Permission();
+        userSearchBtn.setName("搜索");
+        userSearchBtn.setCode("user:search");
+        userSearchBtn.setType(PermissionType.BUTTON);
+        userSearchBtn.setParent(userMenu);
+        userSearchBtn.setOrderNum(3);
+        permissionRepository.save(userSearchBtn);
+
+        Permission userResetBtn = new Permission();
+        userResetBtn.setName("重置");
+        userResetBtn.setCode("user:reset");
+        userResetBtn.setType(PermissionType.BUTTON);
+        userResetBtn.setParent(userMenu);
+        userResetBtn.setOrderNum(4);
+        permissionRepository.save(userResetBtn);
+
         Permission roleMenu = new Permission();
         roleMenu.setName("角色管理");
         roleMenu.setType(PermissionType.MENU);
@@ -94,6 +110,22 @@ public class PermissionServiceTest {
         roleDeleteBtn.setParent(roleMenu);
         roleDeleteBtn.setOrderNum(2);
         permissionRepository.save(roleDeleteBtn);
+
+        Permission roleSearchBtn = new Permission();
+        roleSearchBtn.setName("搜索");
+        roleSearchBtn.setCode("role:search");
+        roleSearchBtn.setType(PermissionType.BUTTON);
+        roleSearchBtn.setParent(roleMenu);
+        roleSearchBtn.setOrderNum(3);
+        permissionRepository.save(roleSearchBtn);
+
+        Permission roleResetBtn = new Permission();
+        roleResetBtn.setName("重置");
+        roleResetBtn.setCode("role:reset");
+        roleResetBtn.setType(PermissionType.BUTTON);
+        roleResetBtn.setParent(roleMenu);
+        roleResetBtn.setOrderNum(4);
+        permissionRepository.save(roleResetBtn);
 
         Permission permissionMenu = new Permission();
         permissionMenu.setName("菜单管理");

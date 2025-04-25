@@ -7,6 +7,7 @@ import com.demo.daniel.model.vo.PermissionDetailVO;
 import com.demo.daniel.model.vo.PermissionVO;
 import com.demo.daniel.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +26,14 @@ public class PermissionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('permission:add')")
     public ApiResponse<Void> addPermission(@RequestBody PermissionCreateDTO request) {
         permissionService.savePermission(request);
         return ApiResponse.ok();
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('permission:edit')")
     public ApiResponse<Void> updatePermission(@RequestBody PermissionUpdateDTO request) {
         permissionService.updatePermission(request);
         return ApiResponse.ok();
@@ -43,6 +46,7 @@ public class PermissionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('permission:delete')")
     public ApiResponse<Void> deletePermission(@PathVariable Long id) {
         permissionService.deletePermission(id);
         return ApiResponse.ok();

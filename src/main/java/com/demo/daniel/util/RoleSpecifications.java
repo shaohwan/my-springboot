@@ -2,12 +2,14 @@ package com.demo.daniel.util;
 
 import com.demo.daniel.model.entity.Role;
 import jakarta.persistence.criteria.Predicate;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class RoleSpecifications {
     public static Specification<Role> buildSpecification(String name) {
         return (root, query, criteriaBuilder) -> {

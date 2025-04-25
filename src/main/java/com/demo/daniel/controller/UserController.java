@@ -9,6 +9,7 @@ import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
+    // @PreAuthorize("hasAuthority('user:search')")
     public ApiResponse<Page<UserVO>> getAllUsers(@ModelAttribute UserQueryDTO request) {
         Page<UserVO> users = userService.getAllUsers(request);
         return ApiResponse.ok(users);
@@ -31,18 +33,21 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('user:add')")
     public ApiResponse<Void> createUser(@RequestBody UserCreateDTO request) {
         userService.createUser(request);
         return ApiResponse.ok();
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('user:edit')")
     public ApiResponse<Void> updateUser(@RequestBody UserUpdateDTO request) {
         userService.updateUser(request);
         return ApiResponse.ok();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('user:delete')")
     public ApiResponse<Void> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);

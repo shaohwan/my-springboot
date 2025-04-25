@@ -2,12 +2,14 @@ package com.demo.daniel.util;
 
 import com.demo.daniel.model.entity.User;
 import jakarta.persistence.criteria.Predicate;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class UserSpecifications {
     public static Specification<User> buildSpecification(String username, String email) {
         return (root, query, criteriaBuilder) -> {

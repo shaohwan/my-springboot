@@ -5,6 +5,7 @@ import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.UserCreateDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpdateDTO;
+import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.Role;
 import com.demo.daniel.model.entity.User;
 import com.demo.daniel.model.vo.UserDetailVO;
@@ -12,16 +13,19 @@ import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import com.demo.daniel.util.UserSpecifications;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -30,6 +34,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Page<UserVO> getAllUsers(UserQueryDTO request) {
         Specification<User> spec = UserSpecifications.buildSpecification(request.getUsername(), request.getEmail());
@@ -52,7 +58,7 @@ public class UserService {
     @Transactional
     public void createUser(UserCreateDTO request) {
         User user = new User();
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setUsername(request.getUsername());
         user.setRealName(request.getRealName());
@@ -96,11 +102,15 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserVO login(String name, String password) {
-        return userRepository.findByUsernameAndPassword(name, password).map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            return userVO;
-        }).orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS.getCode(), ErrorCode.INVALID_CREDENTIALS.getMessage()));
+    public Set<String> getRoles(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + username));
+
+        return user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .map(Permission::getCode)
+                .filter(StringUtils::isNotEmpty)
+                .collect(Collectors.toSet());
     }
+
 }
