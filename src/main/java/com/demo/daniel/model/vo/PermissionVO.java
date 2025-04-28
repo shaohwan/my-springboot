@@ -21,5 +21,9 @@ public class PermissionVO {
 
     private String icon;
 
+    private Long parentId;
+
     private List<Permission> children;
+
+    private Integer orderNum;
 }

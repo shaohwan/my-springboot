@@ -1,12 +1,11 @@
 package com.demo.daniel.controller;
 
+import com.demo.daniel.convert.RoleConvert;
 import com.demo.daniel.model.ApiResponse;
-import com.demo.daniel.model.dto.RoleCreateDTO;
 import com.demo.daniel.model.dto.RoleQueryDTO;
-import com.demo.daniel.model.dto.RoleUpdateDTO;
-import com.demo.daniel.model.vo.RoleDetailVO;
+import com.demo.daniel.model.dto.RoleUpsertDTO;
+import com.demo.daniel.model.entity.Role;
 import com.demo.daniel.model.vo.RoleVO;
-import com.demo.daniel.service.PermissionService;
 import com.demo.daniel.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,33 +19,30 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private PermissionService permissionService;
-
     @GetMapping
     // @PreAuthorize("hasAuthority('role:search')")
-    public ApiResponse<Page<RoleVO>> getAllRoles(@ModelAttribute RoleQueryDTO request) {
-        Page<RoleVO> roles = roleService.getAllRoles(request);
+    public ApiResponse<Page<RoleVO>> getRoles(@ModelAttribute RoleQueryDTO request) {
+        Page<RoleVO> roles = roleService.getRoles(request).map(RoleConvert::convertToVO);
         return ApiResponse.ok(roles);
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<RoleDetailVO> getRole(@PathVariable Long id) {
-        RoleDetailVO role = roleService.getRoleDetail(id);
-        return ApiResponse.ok(role);
+    public ApiResponse<RoleVO> getRole(@PathVariable Long id) {
+        Role role = roleService.getRole(id);
+        return ApiResponse.ok(RoleConvert.convertToVO(role));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('role:add')")
-    public ApiResponse<Void> createRole(@RequestBody RoleCreateDTO request) {
-        roleService.createRole(request);
+    public ApiResponse<Void> createRole(@RequestBody RoleUpsertDTO request) {
+        roleService.upsertRole(request);
         return ApiResponse.ok();
     }
 
     @PutMapping
     @PreAuthorize("hasAuthority('role:edit')")
-    public ApiResponse<Void> updateRole(@RequestBody RoleUpdateDTO request) {
-        roleService.updateRole(request);
+    public ApiResponse<Void> updateRole(@RequestBody RoleUpsertDTO request) {
+        roleService.upsertRole(request);
         return ApiResponse.ok();
     }
 

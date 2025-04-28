@@ -13,4 +13,4 @@ spring:
 
 jwt:
   secret: /YFZnYU4eBc3BCDyHTaEZSD43qBKSrLNssHkTxzgQ5k=
-  expiration: 150000 # 1小时
+  expiration: 30000 # 1小时

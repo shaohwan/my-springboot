@@ -1,9 +1,9 @@
 package com.demo.daniel.controller;
 
+import com.demo.daniel.convert.PermissionConvert;
 import com.demo.daniel.model.ApiResponse;
-import com.demo.daniel.model.dto.PermissionCreateDTO;
-import com.demo.daniel.model.dto.PermissionUpdateDTO;
-import com.demo.daniel.model.vo.PermissionDetailVO;
+import com.demo.daniel.model.dto.PermissionUpsertDTO;
+import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.vo.PermissionVO;
 import com.demo.daniel.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -21,28 +22,28 @@ public class PermissionController {
 
     @GetMapping("/tree")
     public ApiResponse<List<PermissionVO>> getMenuTree(@RequestParam(required = false) String name) {
-        List<PermissionVO> menuTree = permissionService.getMenuTreeByUsername(name);
+        List<PermissionVO> menuTree = permissionService.getMenuTree(name).stream().map(PermissionConvert::convertToVO).collect(Collectors.toList());
         return ApiResponse.ok(menuTree);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('permission:add')")
-    public ApiResponse<Void> addPermission(@RequestBody PermissionCreateDTO request) {
-        permissionService.savePermission(request);
+    public ApiResponse<Void> addPermission(@RequestBody PermissionUpsertDTO request) {
+        permissionService.upsertPermission(request);
         return ApiResponse.ok();
     }
 
     @PutMapping
     @PreAuthorize("hasAuthority('permission:edit')")
-    public ApiResponse<Void> updatePermission(@RequestBody PermissionUpdateDTO request) {
-        permissionService.updatePermission(request);
+    public ApiResponse<Void> updatePermission(@RequestBody PermissionUpsertDTO request) {
+        permissionService.upsertPermission(request);
         return ApiResponse.ok();
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<PermissionDetailVO> getPermissionById(@PathVariable Long id) {
-        PermissionDetailVO permission = permissionService.getPermissionById(id);
-        return ApiResponse.ok(permission);
+    public ApiResponse<PermissionVO> getPermission(@PathVariable Long id) {
+        Permission permission = permissionService.getPermission(id);
+        return ApiResponse.ok(PermissionConvert.convertToVO(permission));
     }
 
     @DeleteMapping("/{id}")

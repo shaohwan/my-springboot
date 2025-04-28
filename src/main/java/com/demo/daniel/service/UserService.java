@@ -1,29 +1,27 @@
 package com.demo.daniel.service;
 
+import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
-import com.demo.daniel.model.dto.UserCreateDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
-import com.demo.daniel.model.dto.UserUpdateDTO;
+import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.Permission;
-import com.demo.daniel.model.entity.Role;
 import com.demo.daniel.model.entity.User;
-import com.demo.daniel.model.vo.UserDetailVO;
-import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import com.demo.daniel.util.UserSpecifications;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,80 +35,51 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Page<UserVO> getAllUsers(UserQueryDTO request) {
+    public static void main(String[] args) {
+        System.out.println(new BCryptPasswordEncoder().encode("123456"));
+    }
+
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User ID " + id + " not found"));
+    }
+
+    public Page<User> getUsers(UserQueryDTO request) {
         Specification<User> spec = UserSpecifications.buildSpecification(request.getUsername(), request.getEmail());
-        return userRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize())).map(user -> {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            return userVO;
-        });
-    }
-
-    public UserDetailVO getUserDetail(Long id) {
-        return userRepository.findById(id).map(user -> {
-                    UserDetailVO userDetailVO = new UserDetailVO();
-                    BeanUtils.copyProperties(user, userDetailVO);
-                    return userDetailVO;
-                })
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + id));
+        return userRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize()));
     }
 
     @Transactional
-    public void createUser(UserCreateDTO request) {
-        User user = new User();
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+    public void upsertUser(UserUpsertDTO request) {
+        User user = Optional.ofNullable(request.getId())
+                .flatMap(id -> userRepository.findById(id))
+                .map(s -> UserConvert.convertToEntity(request, s, "password"))
+                .orElseGet(() -> {
+                    User u = UserConvert.convertToEntity(request, null);
+                    u.setPassword(passwordEncoder.encode(request.getPassword()));
+                    return u;
+                });
 
-        user.setUsername(request.getUsername());
-        user.setRealName(request.getRealName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setEnabled(request.getEnabled());
+        user.setRoles(Optional.ofNullable(request.getRoleIds())
+                .map(roleIds -> new HashSet<>(roleRepository.findAllById(roleIds)))
+                .orElseGet(HashSet::new));
 
-        if (request.getRoleIds() != null) {
-            Set<Role> roles = new HashSet<>(roleRepository.findAllById(request.getRoleIds()));
-            user.setRoles(roles);
-        } else {
-            user.setRoles(new HashSet<>());
-        }
-        userRepository.save(user);
-    }
-
-    @Transactional
-    public void updateUser(UserUpdateDTO request) {
-        User user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + request.getId()));
-
-        user.setUsername(request.getUsername());
-        user.setRealName(request.getRealName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setEnabled(request.getEnabled());
-
-        if (request.getRoleIds() != null) {
-            Set<Role> roles = new HashSet<>(roleRepository.findAllById(request.getRoleIds()));
-            user.setRoles(roles);
-        } else {
-            user.setRoles(new HashSet<>());
-        }
         userRepository.save(user);
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + id));
-        userRepository.delete(user);
+        userRepository.findById(id).ifPresentOrElse(user -> userRepository.delete(user), () -> {
+            throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User ID " + id + " not found");
+        });
     }
 
     public Set<String> getRoles(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "用户不存在: " + username));
-
-        return user.getRoles().stream()
-                .flatMap(role -> role.getPermissions().stream())
-                .map(Permission::getCode)
-                .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.toSet());
+        return userRepository.findByUsername(username).map(user -> user.getRoles().stream()
+                        .flatMap(role -> role.getPermissions().stream())
+                        .map(Permission::getCode)
+                        .filter(StringUtils::isNotEmpty)
+                        .collect(Collectors.toSet()))
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found"));
     }
-
 }

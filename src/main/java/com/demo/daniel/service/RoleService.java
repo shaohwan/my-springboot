@@ -1,19 +1,15 @@
 package com.demo.daniel.service;
 
+import com.demo.daniel.convert.RoleConvert;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
-import com.demo.daniel.model.dto.RoleCreateDTO;
 import com.demo.daniel.model.dto.RoleQueryDTO;
-import com.demo.daniel.model.dto.RoleUpdateDTO;
-import com.demo.daniel.model.entity.Permission;
+import com.demo.daniel.model.dto.RoleUpsertDTO;
 import com.demo.daniel.model.entity.Role;
-import com.demo.daniel.model.entity.User;
-import com.demo.daniel.model.vo.RoleDetailVO;
-import com.demo.daniel.model.vo.RoleVO;
+import com.demo.daniel.repository.PermissionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import com.demo.daniel.util.RoleSpecifications;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RoleService {
@@ -32,79 +26,43 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private PermissionService permissionService;
+    private PermissionRepository permissionRepository;
     @Autowired
     private UserRepository userRepository;
 
-    public Page<RoleVO> getAllRoles(RoleQueryDTO request) {
-        Specification<Role> spec = RoleSpecifications.buildSpecification(request.getName());
-        return roleRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize())).map(role -> {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            return roleVO;
-        });
-    }
-
-    public RoleDetailVO getRoleDetail(Long id) {
+    public Role getRole(Long id) {
         return roleRepository.findById(id)
-                .map(role -> {
-                    RoleDetailVO roleDetailVO = new RoleDetailVO();
-                    BeanUtils.copyProperties(role, roleDetailVO);
-                    Optional.ofNullable(role.getPermissions())
-                            .ifPresent(permissions ->
-                                    roleDetailVO.setPermissionIds(
-                                            permissions.stream()
-                                                    .map(Permission::getId)
-                                                    .collect(Collectors.toList())
-                                    )
-                            );
-                    return roleDetailVO;
-                })
-                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + id));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "Role ID " + id + " not found"));
+    }
+
+    public Page<Role> getRoles(RoleQueryDTO request) {
+        Specification<Role> spec = RoleSpecifications.buildSpecification(request.getName());
+        return roleRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize()));
     }
 
     @Transactional
-    public void createRole(RoleCreateDTO request) {
-        Role role = new Role();
-        role.setName(request.getName());
-        role.setDescription(request.getDescription());
+    public void upsertRole(RoleUpsertDTO request) {
+        Role role = Optional.ofNullable(request.getId())
+                .flatMap(id -> roleRepository.findById(id))
+                .map(r -> RoleConvert.convertToEntity(request, r))
+                .orElseGet(() -> RoleConvert.convertToEntity(request, null));
 
-        if (request.getPermissionIds() != null) {
-            List<Permission> permissions = permissionService.getPermissionByIds(request.getPermissionIds());
-            role.setPermissions(new HashSet<>(permissions));
-        } else {
-            role.setPermissions(new HashSet<>());
-        }
-        roleRepository.save(role);
-    }
+        role.setPermissions(Optional.ofNullable(request.getPermissionIds())
+                .map(permissionIds -> new HashSet<>(permissionRepository.findAllById(permissionIds)))
+                .orElseGet(HashSet::new));
 
-    @Transactional
-    public void updateRole(RoleUpdateDTO request) {
-        Role role = roleRepository.findById(request.getId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + request.getId()));
-        role.setName(request.getName());
-        role.setDescription(request.getDescription());
-
-        if (request.getPermissionIds() != null) {
-            List<Permission> permissions = permissionService.getPermissionByIds(request.getPermissionIds());
-            role.setPermissions(new HashSet<>(permissions));
-        } else {
-            role.setPermissions(new HashSet<>());
-        }
         roleRepository.save(role);
     }
 
     @Transactional
     public void deleteRole(Long id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(), "角色不存在: " + id));
-
-        List<User> usersWithRole = userRepository.findByRolesContaining(role);
-
-        if (!usersWithRole.isEmpty()) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
-                    "无法删除角色 " + role.getName() + " 因为它已被 " + usersWithRole.size() + " 个用户使用!");
-        }
-        roleRepository.deleteById(id);
+        roleRepository.findById(id).ifPresentOrElse(role -> userRepository.findByRolesContaining(role)
+                .filter(users -> !users.isEmpty()).ifPresentOrElse(users -> {
+                    throw new BusinessException(ErrorCode.ROLE_IN_USE.getCode(),
+                            "Role " + role.getName() + " used by " + users.size() + " users");
+                }, () -> roleRepository.deleteById(id)), () -> {
+            throw new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(),
+                    "Role ID " + id + " not found");
+        });
     }
 }

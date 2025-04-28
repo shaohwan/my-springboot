@@ -4,7 +4,7 @@ import com.demo.daniel.model.entity.PermissionType;
 import lombok.Data;
 
 @Data
-public class PermissionCreateDTO {
+public class PermissionUpsertDTO {
 
     private Long id;
 

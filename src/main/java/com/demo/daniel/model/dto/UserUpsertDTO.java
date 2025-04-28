@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserUpdateDTO {
+public class UserUpsertDTO {
 
     private Long id;
 
