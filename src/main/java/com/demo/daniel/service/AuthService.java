@@ -12,6 +12,7 @@ import com.demo.daniel.repository.TokenRepository;
 import com.demo.daniel.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-    private static final LocalDateTime REFRESH_TOKEN_EXPIRY = LocalDateTime.now().plusDays(1);
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -34,7 +34,11 @@ public class AuthService {
     private UserService userService;
 
     public LoginVO login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new BusinessException(ErrorCode.INVALID_CREDENTIALS.getCode(), ErrorCode.INVALID_CREDENTIALS.getMessage());
+        }
 
         String username = request.getUsername();
         String accessToken = jwtTokenProvider.generateToken(username, userService.getRoles(username));
@@ -45,7 +49,8 @@ public class AuthService {
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
 
-        upsertToken(username, refreshToken, REFRESH_TOKEN_EXPIRY);
+        LocalDateTime refreshTokenExpiry = LocalDateTime.now().plusDays(1L);
+        upsertToken(username, refreshToken, refreshTokenExpiry);
         return loginVO;
     }
 
