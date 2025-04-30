@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/role")
 public class RoleController {
@@ -46,10 +48,10 @@ public class RoleController {
         return ApiResponse.ok();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @PreAuthorize("hasAuthority('role:delete')")
-    public ApiResponse<Void> deleteRole(@PathVariable Long id) {
-        roleService.deleteRole(id);
+    public ApiResponse<Void> deleteRole(@RequestBody List<Long> ids) {
+        roleService.deleteRole(ids);
         return ApiResponse.ok();
     }
 }

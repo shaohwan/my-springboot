@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -46,10 +48,10 @@ public class UserController {
         return ApiResponse.ok();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @PreAuthorize("hasAuthority('user:delete')")
-    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ApiResponse<Void> deleteUser(@RequestBody List<Long> ids) {
+        userService.deleteUser(ids);
         return ApiResponse.ok();
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,10 +69,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
-        userRepository.findById(id).ifPresentOrElse(user -> userRepository.delete(user), () -> {
-            throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User ID " + id + " not found");
-        });
+    public void deleteUser(List<Long> ids) {
+        userRepository.deleteAllById(ids);
     }
 
     public Set<String> getRoles(String username) {

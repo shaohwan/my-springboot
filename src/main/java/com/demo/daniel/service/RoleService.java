@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,14 +56,14 @@ public class RoleService {
     }
 
     @Transactional
-    public void deleteRole(Long id) {
-        roleRepository.findById(id).ifPresentOrElse(role -> userRepository.findByRolesContaining(role)
+    public void deleteRole(List<Long> ids) {
+        ids.forEach(id -> roleRepository.findById(id).ifPresentOrElse(role -> userRepository.findByRolesContaining(role)
                 .filter(users -> !users.isEmpty()).ifPresentOrElse(users -> {
                     throw new BusinessException(ErrorCode.ROLE_IN_USE.getCode(),
                             "Role " + role.getName() + " used by " + users.size() + " users");
                 }, () -> roleRepository.deleteById(id)), () -> {
             throw new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(),
                     "Role ID " + id + " not found");
-        });
+        }));
     }
 }
