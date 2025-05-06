@@ -20,7 +20,8 @@ public class PermissionServiceTest {
 
     private static final String PASSWORD = "123456";
     private static final String[] BUTTON_ACTIONS = {"add", "edit", "delete", "search", "reset"};
-    private static final String[] MENU_NAMES = {"user", "role", "permission"};
+    private static final String[] MENU_NAMES = {"用户管理", "角色管理", "权限管理"};
+    private static final String[] MENU_CODES = {"user", "role", "permission"};
     private static final String[] MENU_URLS = {"auth/user/index", "auth/role/index", "auth/permission/index"};
 
     @Autowired
@@ -45,7 +46,7 @@ public class PermissionServiceTest {
         for (int i = 0; i < MENU_NAMES.length; i++) {
             // Create menu permission
             Permission menu = createPermission(
-                    MENU_NAMES[i] + "管理",
+                    MENU_NAMES[i],
                     PermissionType.MENU,
                     MENU_URLS[i],
                     i,
@@ -59,7 +60,7 @@ public class PermissionServiceTest {
                 Permission button = createPermission(
                         getButtonName(BUTTON_ACTIONS[j]),
                         PermissionType.BUTTON,
-                        MENU_NAMES[i] + ":" + BUTTON_ACTIONS[j],
+                        MENU_CODES[i] + ":" + BUTTON_ACTIONS[j],
                         j,
                         menu
                 );
@@ -79,6 +80,8 @@ public class PermissionServiceTest {
         user.setRealName("daniel");
         user.setUsername("daniel");
         user.setPassword(passwordEncoder.encode(PASSWORD));
+        user.setEmail("daniel@qq.com");
+        user.setPhone("13913133777");
         user.setRoles(Set.of(adminRole));
         userRepository.save(user);
     }
