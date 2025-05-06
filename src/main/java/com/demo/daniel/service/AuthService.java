@@ -22,6 +22,8 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    private static final Long REFRESH_EXPIRY_REMEMBER = 7L;
+    private static final Long REFRESH_EXPIRY_NOT_REMEMBER = 1L;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -49,7 +51,8 @@ public class AuthService {
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
 
-        LocalDateTime refreshTokenExpiry = LocalDateTime.now().plusDays(1L);
+        LocalDateTime refreshTokenExpiry = LocalDateTime.now().plusDays(request.getRememberMe() ? REFRESH_EXPIRY_REMEMBER : REFRESH_EXPIRY_NOT_REMEMBER);
+
         upsertToken(username, refreshToken, refreshTokenExpiry);
         return loginVO;
     }

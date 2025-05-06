@@ -10,11 +10,18 @@ import com.demo.daniel.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootTest
 public class PermissionServiceTest {
+
+    private static final String PASSWORD = "123456";
+    private static final String[] BUTTON_ACTIONS = {"add", "edit", "delete", "search", "reset"};
+    private static final String[] MENU_NAMES = {"user", "role", "permission"};
+    private static final String[] MENU_URLS = {"auth/user/index", "auth/role/index", "auth/permission/index"};
 
     @Autowired
     private PermissionRepository permissionRepository;
@@ -22,155 +29,84 @@ public class PermissionServiceTest {
     private RoleRepository roleRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     public void testAddPermission() {
-        Permission root = new Permission();
-        root.setName("权限管理");
-        root.setType(PermissionType.MENU);
-        root.setOrderNum(0);
+        // Create root permission
+        Permission root = createPermission("权限管理", PermissionType.MENU, null, 0, null);
         permissionRepository.save(root);
 
-        Permission userMenu = new Permission();
-        userMenu.setName("用户管理");
-        userMenu.setType(PermissionType.MENU);
-        userMenu.setUrl("auth/user/index");
-        userMenu.setParent(root);
-        userMenu.setOrderNum(0);
-        permissionRepository.save(userMenu);
+        // Create menu permissions and their buttons
+        Set<Permission> allPermissions = new HashSet<>();
+        allPermissions.add(root);
 
-        Permission userAddBtn = new Permission();
-        userAddBtn.setName("新增");
-        userAddBtn.setCode("user:add");
-        userAddBtn.setType(PermissionType.BUTTON);
-        userAddBtn.setParent(userMenu);
-        userAddBtn.setOrderNum(0);
-        permissionRepository.save(userAddBtn);
+        for (int i = 0; i < MENU_NAMES.length; i++) {
+            // Create menu permission
+            Permission menu = createPermission(
+                    MENU_NAMES[i] + "管理",
+                    PermissionType.MENU,
+                    MENU_URLS[i],
+                    i,
+                    root
+            );
+            permissionRepository.save(menu);
+            allPermissions.add(menu);
 
-        Permission userEditBtn = new Permission();
-        userEditBtn.setName("编辑");
-        userEditBtn.setCode("user:edit");
-        userEditBtn.setType(PermissionType.BUTTON);
-        userEditBtn.setParent(userMenu);
-        userEditBtn.setOrderNum(1);
-        permissionRepository.save(userEditBtn);
+            // Create button permissions for each menu
+            for (int j = 0; j < BUTTON_ACTIONS.length; j++) {
+                Permission button = createPermission(
+                        getButtonName(BUTTON_ACTIONS[j]),
+                        PermissionType.BUTTON,
+                        MENU_NAMES[i] + ":" + BUTTON_ACTIONS[j],
+                        j,
+                        menu
+                );
+                permissionRepository.save(button);
+                allPermissions.add(button);
+            }
+        }
 
-        Permission userDeleteBtn = new Permission();
-        userDeleteBtn.setName("删除");
-        userDeleteBtn.setCode("user:delete");
-        userDeleteBtn.setType(PermissionType.BUTTON);
-        userDeleteBtn.setParent(userMenu);
-        userDeleteBtn.setOrderNum(2);
-        permissionRepository.save(userDeleteBtn);
-
-        Permission userSearchBtn = new Permission();
-        userSearchBtn.setName("搜索");
-        userSearchBtn.setCode("user:search");
-        userSearchBtn.setType(PermissionType.BUTTON);
-        userSearchBtn.setParent(userMenu);
-        userSearchBtn.setOrderNum(3);
-        permissionRepository.save(userSearchBtn);
-
-        Permission userResetBtn = new Permission();
-        userResetBtn.setName("重置");
-        userResetBtn.setCode("user:reset");
-        userResetBtn.setType(PermissionType.BUTTON);
-        userResetBtn.setParent(userMenu);
-        userResetBtn.setOrderNum(4);
-        permissionRepository.save(userResetBtn);
-
-        Permission roleMenu = new Permission();
-        roleMenu.setName("角色管理");
-        roleMenu.setType(PermissionType.MENU);
-        roleMenu.setUrl("auth/role/index");
-        roleMenu.setParent(root);
-        roleMenu.setOrderNum(1);
-        permissionRepository.save(roleMenu);
-
-        Permission roleAddBtn = new Permission();
-        roleAddBtn.setName("新增");
-        roleAddBtn.setCode("role:add");
-        roleAddBtn.setType(PermissionType.BUTTON);
-        roleAddBtn.setParent(roleMenu);
-        roleAddBtn.setOrderNum(0);
-        permissionRepository.save(roleAddBtn);
-
-        Permission roleEditBtn = new Permission();
-        roleEditBtn.setName("编辑");
-        roleEditBtn.setCode("role:edit");
-        roleEditBtn.setType(PermissionType.BUTTON);
-        roleEditBtn.setParent(roleMenu);
-        roleEditBtn.setOrderNum(1);
-        permissionRepository.save(roleEditBtn);
-
-        Permission roleDeleteBtn = new Permission();
-        roleDeleteBtn.setName("删除");
-        roleDeleteBtn.setCode("role:delete");
-        roleDeleteBtn.setType(PermissionType.BUTTON);
-        roleDeleteBtn.setParent(roleMenu);
-        roleDeleteBtn.setOrderNum(2);
-        permissionRepository.save(roleDeleteBtn);
-
-        Permission roleSearchBtn = new Permission();
-        roleSearchBtn.setName("搜索");
-        roleSearchBtn.setCode("role:search");
-        roleSearchBtn.setType(PermissionType.BUTTON);
-        roleSearchBtn.setParent(roleMenu);
-        roleSearchBtn.setOrderNum(3);
-        permissionRepository.save(roleSearchBtn);
-
-        Permission roleResetBtn = new Permission();
-        roleResetBtn.setName("重置");
-        roleResetBtn.setCode("role:reset");
-        roleResetBtn.setType(PermissionType.BUTTON);
-        roleResetBtn.setParent(roleMenu);
-        roleResetBtn.setOrderNum(4);
-        permissionRepository.save(roleResetBtn);
-
-        Permission permissionMenu = new Permission();
-        permissionMenu.setName("菜单管理");
-        permissionMenu.setType(PermissionType.MENU);
-        permissionMenu.setUrl("auth/permission/index");
-        permissionMenu.setParent(root);
-        permissionMenu.setOrderNum(2);
-        permissionRepository.save(permissionMenu);
-
-        Permission permissionAddBtn = new Permission();
-        permissionAddBtn.setName("新增");
-        permissionAddBtn.setCode("permission:add");
-        permissionAddBtn.setType(PermissionType.BUTTON);
-        permissionAddBtn.setParent(permissionMenu);
-        permissionAddBtn.setOrderNum(0);
-        permissionRepository.save(permissionAddBtn);
-
-        Permission permissionEditBtn = new Permission();
-        permissionEditBtn.setName("编辑");
-        permissionEditBtn.setCode("permission:edit");
-        permissionEditBtn.setType(PermissionType.BUTTON);
-        permissionEditBtn.setParent(permissionMenu);
-        permissionEditBtn.setOrderNum(1);
-        permissionRepository.save(permissionEditBtn);
-
-        Permission permissionDeleteBtn = new Permission();
-        permissionDeleteBtn.setName("删除");
-        permissionDeleteBtn.setCode("permission:delete");
-        permissionDeleteBtn.setType(PermissionType.BUTTON);
-        permissionDeleteBtn.setParent(permissionMenu);
-        permissionDeleteBtn.setOrderNum(2);
-        permissionRepository.save(permissionDeleteBtn);
-
-        // 初始化角色
+        // Initialize admin role with all permissions
         Role adminRole = new Role();
         adminRole.setName("管理员");
-        adminRole.setPermissions(Set.of(root, userMenu, userAddBtn, userEditBtn, userDeleteBtn, roleMenu, roleAddBtn,
-                roleEditBtn, roleDeleteBtn, permissionMenu, permissionAddBtn, permissionEditBtn, permissionDeleteBtn));
+        adminRole.setPermissions(allPermissions);
         roleRepository.save(adminRole);
 
+        // Initialize admin user
         User user = new User();
         user.setRealName("daniel");
         user.setUsername("daniel");
-        user.setPassword("123456");
+        user.setPassword(passwordEncoder.encode(PASSWORD));
         user.setRoles(Set.of(adminRole));
         userRepository.save(user);
+    }
+
+    private Permission createPermission(String name, PermissionType type, String codeOrUrl, int orderNum, Permission parent) {
+        Permission permission = new Permission();
+        permission.setName(name);
+        permission.setType(type);
+        permission.setOrderNum(orderNum);
+        permission.setParent(parent);
+
+        if (type == PermissionType.MENU) {
+            permission.setUrl(codeOrUrl);
+        } else {
+            permission.setCode(codeOrUrl);
+        }
+
+        return permission;
+    }
+
+    private String getButtonName(String action) {
+        return switch (action) {
+            case "add" -> "新增";
+            case "edit" -> "编辑";
+            case "delete" -> "删除";
+            case "search" -> "搜索";
+            case "reset" -> "重置";
+            default -> action;
+        };
     }
 }
