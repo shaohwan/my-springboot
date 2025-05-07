@@ -17,6 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -55,15 +56,19 @@ public class RoleService {
         roleRepository.save(role);
     }
 
-    @Transactional
-    public void deleteRole(List<Long> ids) {
+    public void deleteRoles(List<Long> ids) {
+        List<String> errors = new ArrayList<>();
+
         ids.forEach(id -> roleRepository.findById(id).ifPresentOrElse(role -> userRepository.findByRolesContaining(role)
-                .filter(users -> !users.isEmpty()).ifPresentOrElse(users -> {
+                .filter(users -> !users.isEmpty())
+                .ifPresentOrElse(users -> errors.add("Role " + role.getName() + " (ID: " + id + ") is used by " + users.size() + " users")
+                        , () -> roleRepository.deleteById(id)), () -> errors.add("Role ID " + id + " not found")));
+
+        Optional.of(errors)
+                .filter(errs -> !errs.isEmpty())
+                .ifPresent(errs -> {
                     throw new BusinessException(ErrorCode.ROLE_IN_USE.getCode(),
-                            "Role " + role.getName() + " used by " + users.size() + " users");
-                }, () -> roleRepository.deleteById(id)), () -> {
-            throw new BusinessException(ErrorCode.ROLE_NOT_EXIST.getCode(),
-                    "Role ID " + id + " not found");
-        }));
+                            "Role(s) cannot be deleted: " + String.join("; ", errs));
+                });
     }
 }

@@ -15,12 +15,13 @@ public enum ErrorCode {
     USER_NOT_EXIST(1001, "用户不存在"),
     INVALID_CREDENTIALS(1002, "用户名或密码错误"),
     USERNAME_EXISTS(1003, "用户名已存在"),
+    USER_IS_LOGIN(1004, "用户已经登录"),
 
-    ROLE_NOT_EXIST(1004, "角色不存在"),
-    ROLE_IN_USE(1005, "角色正被使用"),
+    ROLE_NOT_EXIST(1005, "角色不存在"),
+    ROLE_IN_USE(1006, "角色正被使用"),
 
-    PERMISSION_NOT_EXIST(1006, "权限不存在"),
-    PERMISSION_IN_USE(1007, "权限正被使用");
+    PERMISSION_NOT_EXIST(1007, "权限不存在"),
+    PERMISSION_IN_USE(1008, "权限正被使用");
 
     private final int code;
     private final String message;

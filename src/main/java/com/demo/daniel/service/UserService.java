@@ -15,14 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,9 +61,26 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional
-    public void deleteUser(List<Long> ids) {
-        userRepository.deleteAllById(ids);
+    public void deleteUsers(List<Long> ids) {
+        List<String> errors = new ArrayList<>();
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        ids.forEach(id -> userRepository.findById(id).ifPresentOrElse(
+                user -> {
+                    if (currentUsername.equals(user.getUsername()))
+                        errors.add("User " + user.getUsername() + " (ID: " + id + ") cannot be deleted as it is the current user");
+                    else
+                        userRepository.deleteById(id);
+                },
+                () -> errors.add("User ID " + id + " not found")
+        ));
+
+        Optional.of(errors)
+                .filter(errs -> !errs.isEmpty())
+                .ifPresent(errs -> {
+                    throw new BusinessException(ErrorCode.USER_IS_LOGIN.getCode(),
+                            "User(s) cannot be deleted: " + String.join("; ", errs));
+                });
     }
 
     public Set<String> getRoles(String username) {

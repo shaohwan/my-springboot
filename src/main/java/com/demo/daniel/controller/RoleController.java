@@ -50,8 +50,8 @@ public class RoleController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('role:delete')")
-    public ApiResponse<Void> deleteRole(@RequestBody List<Long> ids) {
-        roleService.deleteRole(ids);
+    public ApiResponse<Void> deleteRoles(@RequestBody List<Long> ids) {
+        roleService.deleteRoles(ids);
         return ApiResponse.ok();
     }
 }

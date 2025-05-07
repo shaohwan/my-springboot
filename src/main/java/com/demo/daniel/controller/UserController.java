@@ -50,8 +50,8 @@ public class UserController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('user:delete')")
-    public ApiResponse<Void> deleteUser(@RequestBody List<Long> ids) {
-        userService.deleteUser(ids);
+    public ApiResponse<Void> deleteUsers(@RequestBody List<Long> ids) {
+        userService.deleteUsers(ids);
         return ApiResponse.ok();
     }
 }
