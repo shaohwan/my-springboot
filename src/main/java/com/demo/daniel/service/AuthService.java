@@ -36,6 +36,10 @@ public class AuthService {
     private UserService userService;
 
     public LoginVO login(LoginRequest request) {
+        userRepository.findByUsername(request.getUsername()).filter(user -> !user.getEnabled()).ifPresent(user -> {
+            throw new BusinessException(ErrorCode.USER_DISABLED.getCode(), ErrorCode.USER_DISABLED.getMessage());
+        });
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         } catch (BadCredentialsException e) {
