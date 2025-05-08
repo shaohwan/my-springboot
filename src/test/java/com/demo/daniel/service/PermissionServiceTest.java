@@ -70,11 +70,9 @@ public class PermissionServiceTest {
         }
 
         // Initialize admin role with all permissions
-        Role adminRole = new Role();
-        adminRole.setName("管理员");
-        adminRole.setDescription("管理员");
-        adminRole.setPermissions(allPermissions);
-        roleRepository.save(adminRole);
+        Role adminRole = createRole("管理员", "管理员", allPermissions);
+        Role commonRole = createRole("普通用户", "普通用户", allPermissions);
+        roleRepository.saveAll(List.of(adminRole, commonRole));
 
         // Initialize admin user
         User adminUser = createUser(
@@ -84,9 +82,8 @@ public class PermissionServiceTest {
                 Boolean.FALSE,
                 "daniel@qq.com",
                 "13913133777",
-                Set.of(adminRole)
+                Set.of(adminRole, commonRole)
         );
-
         User superAdmin = createUser(
                 "admin",
                 "admin",
@@ -124,6 +121,15 @@ public class PermissionServiceTest {
             case "reset" -> "重置";
             default -> action;
         };
+    }
+
+    private Role createRole(String name, String description, Set<Permission> permissions) {
+        Role role = new Role();
+        role.setName(name);
+        if (description != null)
+            role.setDescription(description);
+        role.setPermissions(permissions);
+        return role;
     }
 
     private User createUser(String username, String realName, String password, Boolean superAdmin, String email, String phone, Set<Role> roles) {

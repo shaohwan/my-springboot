@@ -31,7 +31,6 @@ public class Permission {
     @Column(name = "code", unique = true)
     private String code;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private PermissionType type;
 
