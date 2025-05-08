@@ -7,6 +7,7 @@ import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.User;
+import com.demo.daniel.repository.PermissionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import com.demo.daniel.util.UserSpecifications;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class UserService {
@@ -30,6 +32,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PermissionRepository permissionRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -84,11 +88,11 @@ public class UserService {
     }
 
     public Set<String> getRoles(String username) {
-        return userRepository.findByUsername(username).map(user -> user.getRoles().stream()
-                        .flatMap(role -> role.getPermissions().stream())
-                        .map(Permission::getCode)
-                        .filter(StringUtils::isNotEmpty)
-                        .collect(Collectors.toSet()))
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found"));
+        return userRepository.findByUsername(username).map(user -> {
+            Stream<Permission> sp = user.getSuperAdmin() ? permissionRepository.findAll().stream()
+                    : user.getRoles().stream().flatMap(role -> role.getPermissions().stream());
+            return sp.map(Permission::getCode).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
+        }).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode()
+                , "User Name " + username + " not found"));
     }
 }

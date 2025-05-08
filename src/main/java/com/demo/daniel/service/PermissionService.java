@@ -36,7 +36,8 @@ public class PermissionService {
         } else {
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found"));
-            allPermissions = user.getRoles().stream()
+
+            allPermissions = user.getSuperAdmin() ? permissionRepository.findAll() : user.getRoles().stream()
                     .flatMap(role -> role.getPermissions().stream())
                     .distinct()
                     .collect(Collectors.toList());

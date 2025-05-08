@@ -13,14 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
 public class PermissionServiceTest {
 
-    private static final String PASSWORD = "123456";
     private static final String[] BUTTON_ACTIONS = {"add", "edit", "delete", "search", "reset"};
-    private static final String[] MENU_NAMES = {"用户管理", "角色管理", "权限管理"};
+    private static final String[] MENU_NAMES = {"用户管理", "角色管理", "菜单管理"};
     private static final String[] MENU_CODES = {"user", "role", "permission"};
     private static final String[] MENU_URLS = {"auth/user/index", "auth/role/index", "auth/permission/index"};
 
@@ -72,18 +72,31 @@ public class PermissionServiceTest {
         // Initialize admin role with all permissions
         Role adminRole = new Role();
         adminRole.setName("管理员");
+        adminRole.setDescription("管理员");
         adminRole.setPermissions(allPermissions);
         roleRepository.save(adminRole);
 
         // Initialize admin user
-        User user = new User();
-        user.setRealName("daniel");
-        user.setUsername("daniel");
-        user.setPassword(passwordEncoder.encode(PASSWORD));
-        user.setEmail("daniel@qq.com");
-        user.setPhone("13913133777");
-        user.setRoles(Set.of(adminRole));
-        userRepository.save(user);
+        User adminUser = createUser(
+                "daniel",
+                "Daniel Wang",
+                "123456",
+                Boolean.FALSE,
+                "daniel@qq.com",
+                "13913133777",
+                Set.of(adminRole)
+        );
+
+        User superAdmin = createUser(
+                "admin",
+                "admin",
+                "admin",
+                Boolean.TRUE,
+                "admin@qq.com",
+                "13913133666",
+                null
+        );
+        userRepository.saveAll(List.of(adminUser, superAdmin));
     }
 
     private Permission createPermission(String name, PermissionType type, String codeOrUrl, int orderNum, Permission parent) {
@@ -111,5 +124,20 @@ public class PermissionServiceTest {
             case "reset" -> "重置";
             default -> action;
         };
+    }
+
+    private User createUser(String username, String realName, String password, Boolean superAdmin, String email, String phone, Set<Role> roles) {
+        User user = new User();
+        user.setUsername(username);
+        user.setRealName(realName);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setSuperAdmin(superAdmin);
+        if (email != null)
+            user.setEmail(email);
+        if (phone != null)
+            user.setPhone(phone);
+        if (roles != null)
+            user.setRoles(roles);
+        return user;
     }
 }

@@ -10,6 +10,7 @@ import com.demo.daniel.model.vo.LoginVO;
 import com.demo.daniel.model.vo.RefreshVO;
 import com.demo.daniel.repository.TokenRepository;
 import com.demo.daniel.repository.UserRepository;
+import com.demo.daniel.util.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,8 +23,7 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-    private static final Long REFRESH_EXPIRY_REMEMBER = 7L;
-    private static final Long REFRESH_EXPIRY_NOT_REMEMBER = 1L;
+
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -55,7 +55,8 @@ public class AuthService {
         loginVO.setAccessToken(accessToken);
         loginVO.setRefreshToken(refreshToken);
 
-        LocalDateTime refreshTokenExpiry = LocalDateTime.now().plusDays(request.getRememberMe() ? REFRESH_EXPIRY_REMEMBER : REFRESH_EXPIRY_NOT_REMEMBER);
+        LocalDateTime refreshTokenExpiry = LocalDateTime.now().plusDays(request.getRememberMe()
+                ? AppConstants.REFRESH_EXPIRY_REMEMBER : AppConstants.REFRESH_EXPIRY_NOT_REMEMBER);
 
         upsertToken(username, refreshToken, refreshTokenExpiry);
         return loginVO;
@@ -85,9 +86,7 @@ public class AuthService {
     public void upsertToken(String username, String refreshToken, LocalDateTime refreshTokenExpiry) {
         userRepository.findByUsername(username).ifPresentOrElse(user -> {
             UserToken userToken = new UserToken();
-            tokenRepository.findByUserId(user.getId()).ifPresent(ut -> {
-                userToken.setId(ut.getId());
-            });
+            tokenRepository.findByUserId(user.getId()).ifPresent(ut -> userToken.setId(ut.getId()));
             userToken.setUserId(user.getId());
             userToken.setRefreshToken(refreshToken);
             userToken.setRefreshTokenExpiry(refreshTokenExpiry);

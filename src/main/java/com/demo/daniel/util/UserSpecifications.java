@@ -27,6 +27,8 @@ public class UserSpecifications {
                         "%" + email.toLowerCase() + "%"));
             }
 
+            predicates.add(criteriaBuilder.equal(root.get("superAdmin"), false));
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }

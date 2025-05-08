@@ -44,7 +44,10 @@ public class User {
     private String avatar;
 
     @Column(name = "is_enabled")
-    private Boolean enabled = true;
+    private Boolean enabled = Boolean.TRUE;
+
+    @Column(name = "is_super_admin")
+    private Boolean superAdmin = Boolean.FALSE;
 
     @CreationTimestamp
     @Column(name = "create_time")
