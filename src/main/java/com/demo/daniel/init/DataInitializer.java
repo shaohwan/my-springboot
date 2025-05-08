@@ -1,4 +1,4 @@
-package com.demo.daniel.service;
+package com.demo.daniel.init;
 
 import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.PermissionType;
@@ -7,17 +7,21 @@ import com.demo.daniel.model.entity.User;
 import com.demo.daniel.repository.PermissionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
-import org.junit.jupiter.api.Test;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SpringBootTest
-public class PermissionServiceTest {
+@Component
+@Profile({"dev"})
+@Slf4j
+public class DataInitializer implements CommandLineRunner {
 
     private static final String[] BUTTON_ACTIONS = {"add", "edit", "delete", "search", "reset"};
     private static final String[] MENU_NAMES = {"用户管理", "角色管理", "菜单管理"};
@@ -33,29 +37,35 @@ public class PermissionServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Test
-    public void testAddPermission() {
-        // Create root permission
+    @Override
+    public void run(String... args) {
+        log.info("Checking if data initialization is needed...");
+
+        if (permissionRepository.count() == 0 && roleRepository.count() == 0 && userRepository.count() == 0) {
+            log.info("No data found, starting initialization...");
+            Set<Permission> allPermissions = new HashSet<>();
+            initializePermissions(allPermissions);
+
+            Set<Role> roles = new HashSet<>();
+            initializeRoles(allPermissions, roles);
+
+            initializeUsers(roles);
+            log.info("Data initialization completed.");
+        } else {
+            log.info("Data already exists, skipping initialization.");
+        }
+    }
+
+    private void initializePermissions(Set<Permission> allPermissions) {
         Permission root = createPermission("权限管理", PermissionType.MENU, null, 0, null);
         permissionRepository.save(root);
-
-        // Create menu permissions and their buttons
-        Set<Permission> allPermissions = new HashSet<>();
         allPermissions.add(root);
 
         for (int i = 0; i < MENU_NAMES.length; i++) {
-            // Create menu permission
-            Permission menu = createPermission(
-                    MENU_NAMES[i],
-                    PermissionType.MENU,
-                    MENU_URLS[i],
-                    i,
-                    root
-            );
-            permissionRepository.save(menu);
+            Permission menu = createPermission(MENU_NAMES[i], PermissionType.MENU, MENU_URLS[i], i, root);
             allPermissions.add(menu);
+            permissionRepository.save(menu);
 
-            // Create button permissions for each menu
             for (int j = 0; j < BUTTON_ACTIONS.length; j++) {
                 Permission button = createPermission(
                         getButtonName(BUTTON_ACTIONS[j]),
@@ -64,17 +74,22 @@ public class PermissionServiceTest {
                         j,
                         menu
                 );
-                permissionRepository.save(button);
                 allPermissions.add(button);
+                permissionRepository.save(button);
             }
         }
+    }
 
-        // Initialize admin role with all permissions
+    private void initializeRoles(Set<Permission> allPermissions, Set<Role> roles) {
         Role adminRole = createRole("管理员", "管理员", allPermissions);
-        Role commonRole = createRole("普通用户", "普通用户", allPermissions);
-        roleRepository.saveAll(List.of(adminRole, commonRole));
+        roles.add(adminRole);
 
-        // Initialize admin user
+        Role commonRole = createRole("普通用户", "普通用户", allPermissions);
+        roles.add(commonRole);
+        roleRepository.saveAll(roles);
+    }
+
+    private void initializeUsers(Set<Role> roles) {
         User adminUser = createUser(
                 "daniel",
                 "Daniel Wang",
@@ -82,8 +97,9 @@ public class PermissionServiceTest {
                 Boolean.FALSE,
                 "daniel@qq.com",
                 "13913133777",
-                Set.of(adminRole, commonRole)
+                roles
         );
+
         User superAdmin = createUser(
                 "admin",
                 "admin",
@@ -103,12 +119,10 @@ public class PermissionServiceTest {
         permission.setOrderNum(orderNum);
         permission.setParent(parent);
 
-        if (type == PermissionType.MENU) {
+        if (type == PermissionType.MENU)
             permission.setUrl(codeOrUrl);
-        } else {
+        else
             permission.setCode(codeOrUrl);
-        }
-
         return permission;
     }
 
