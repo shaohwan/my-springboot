@@ -11,6 +11,7 @@ import java.util.List;
 
 @UtilityClass
 public class RoleSpecifications {
+
     public static Specification<Role> buildSpecification(String name) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

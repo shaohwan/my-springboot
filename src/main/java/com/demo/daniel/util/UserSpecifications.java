@@ -11,6 +11,7 @@ import java.util.List;
 
 @UtilityClass
 public class UserSpecifications {
+
     public static Specification<User> buildSpecification(String username, String email) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
