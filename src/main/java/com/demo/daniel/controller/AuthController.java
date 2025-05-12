@@ -3,6 +3,7 @@ package com.demo.daniel.controller;
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.LoginRequest;
+import com.demo.daniel.model.dto.LogoutRequest;
 import com.demo.daniel.model.dto.RefreshRequest;
 import com.demo.daniel.model.vo.LoginVO;
 import com.demo.daniel.model.vo.RefreshVO;
@@ -24,6 +25,12 @@ public class AuthController {
     public ApiResponse<LoginVO> login(@RequestBody LoginRequest request) {
         LoginVO loginVO = authService.login(request);
         return ApiResponse.ok(loginVO);
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest request) {
+        authService.logout(request);
+        return ApiResponse.ok();
     }
 
     @PostMapping("/refresh")

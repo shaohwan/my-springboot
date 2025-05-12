@@ -4,7 +4,10 @@ import com.demo.daniel.exception.AuthException;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.LoginRequest;
+import com.demo.daniel.model.dto.LogoutRequest;
 import com.demo.daniel.model.dto.RefreshRequest;
+import com.demo.daniel.model.entity.LogLoginOperationType;
+import com.demo.daniel.model.entity.LogLoginStatusType;
 import com.demo.daniel.model.entity.UserToken;
 import com.demo.daniel.model.vo.LoginVO;
 import com.demo.daniel.model.vo.RefreshVO;
@@ -23,7 +26,6 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
-
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -34,6 +36,8 @@ public class AuthService {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LogLoginService logLoginService;
 
     public LoginVO login(LoginRequest request) {
         userRepository.findByUsername(request.getUsername()).filter(user -> !user.getEnabled()).ifPresent(user -> {
@@ -60,6 +64,18 @@ public class AuthService {
 
         upsertToken(username, refreshToken, refreshTokenExpiry);
         return loginVO;
+    }
+
+    public void logout(LogoutRequest request) {
+        String username = request.getUsername();
+        userRepository.findByUsername(username).ifPresentOrElse(user -> tokenRepository.findByUserId(user.getId()).ifPresent(ut -> {
+            ut.setRefreshTokenExpiry(LocalDateTime.now());
+            tokenRepository.save(ut);
+
+            logLoginService.saveLog(username, LogLoginStatusType.SUCCESS, LogLoginOperationType.LOGOUT_SUCCESS);
+        }), () -> {
+            throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found");
+        });
     }
 
     public RefreshVO refreshToken(RefreshRequest request) {
