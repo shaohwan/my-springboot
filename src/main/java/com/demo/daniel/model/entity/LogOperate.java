@@ -9,19 +9,32 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "sys_log_login")
+@Table(name = "sys_log_operate")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LogLogin {
+public class LogOperate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "module")
+    private String module;
+
+    // 操作名
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "request_uri")
+    private String requestUri;
+
+    @Column(name = "request_method")
+    private String requestMethod;
+
+    @Column(name = "request_parameters")
+    private String requestParameters;
 
     @Column(name = "ip")
     private String ip;
@@ -32,11 +45,20 @@ public class LogLogin {
     @Column(name = "user_agent")
     private String userAgent;
 
+    @Column(name = "type")
+    private LogOperateType type;
+
     @Column(name = "status")
     private LogStatus status;
 
-    @Column(name = "operation")
-    private LogLoginOperation operation;
+    @Column(name = "duration")
+    private Long duration;
+
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "result_message")
+    private String resultMessage;
 
     @CreationTimestamp
     @Column(name = "create_time")

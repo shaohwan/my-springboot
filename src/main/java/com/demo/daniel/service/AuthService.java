@@ -6,8 +6,8 @@ import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.LoginRequest;
 import com.demo.daniel.model.dto.LogoutRequest;
 import com.demo.daniel.model.dto.RefreshRequest;
-import com.demo.daniel.model.entity.LogLoginOperationType;
-import com.demo.daniel.model.entity.LogLoginStatusType;
+import com.demo.daniel.model.entity.LogLoginOperation;
+import com.demo.daniel.model.entity.LogStatus;
 import com.demo.daniel.model.entity.UserToken;
 import com.demo.daniel.model.vo.LoginVO;
 import com.demo.daniel.model.vo.RefreshVO;
@@ -72,7 +72,7 @@ public class AuthService {
             ut.setRefreshTokenExpiry(LocalDateTime.now());
             tokenRepository.save(ut);
 
-            logLoginService.saveLog(username, LogLoginStatusType.SUCCESS, LogLoginOperationType.LOGOUT_SUCCESS);
+            logLoginService.saveLog(username, LogStatus.SUCCESS, LogLoginOperation.LOGOUT_SUCCESS);
         }), () -> {
             throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found");
         });

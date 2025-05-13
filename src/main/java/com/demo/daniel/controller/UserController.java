@@ -1,9 +1,11 @@
 package com.demo.daniel.controller;
 
+import com.demo.daniel.annotation.OperateLog;
 import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
+import com.demo.daniel.model.entity.LogOperateType;
 import com.demo.daniel.model.entity.User;
 import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.service.UserService;
@@ -36,6 +38,7 @@ public class UserController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('user:add')")
+    @OperateLog(module = "用户管理", name = "新增用户", type = LogOperateType.ADD)
     public ApiResponse<Void> createUser(@RequestBody UserUpsertDTO request) {
         userService.upsertUser(request);
         return ApiResponse.ok();
@@ -43,6 +46,7 @@ public class UserController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('user:edit')")
+    @OperateLog(module = "用户管理", name = "编辑用户", type = LogOperateType.EDIT)
     public ApiResponse<Void> updateUser(@RequestBody UserUpsertDTO request) {
         userService.upsertUser(request);
         return ApiResponse.ok();
@@ -50,6 +54,7 @@ public class UserController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('user:delete')")
+    @OperateLog(module = "用户管理", name = "删除用户(们)", type = LogOperateType.DELETE)
     public ApiResponse<Void> deleteUsers(@RequestBody List<Long> ids) {
         userService.deleteUsers(ids);
         return ApiResponse.ok();

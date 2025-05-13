@@ -22,7 +22,9 @@ public enum ErrorCode {
     ROLE_IN_USE(1007, "角色正被使用"),
 
     PERMISSION_NOT_EXIST(1008, "权限不存在"),
-    PERMISSION_IN_USE(1009, "权限正被使用");
+    PERMISSION_IN_USE(1009, "权限正被使用"),
+
+    LOG_OPERATE_NOT_EXIST(1010, "操作日志不存在");
 
     private final int code;
     private final String message;

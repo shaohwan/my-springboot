@@ -4,11 +4,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum LogLoginStatusType {
+public enum LogOperateType {
 
-    FAILURE(0),
+    ADD(1),
 
-    SUCCESS(1);
+    EDIT(2),
+
+    DELETE(3),
+
+    SEARCH(4),
+
+    OTHER(0);
 
     private final int value;
 

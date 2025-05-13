@@ -1,8 +1,10 @@
 package com.demo.daniel.controller;
 
+import com.demo.daniel.annotation.OperateLog;
 import com.demo.daniel.convert.PermissionConvert;
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.PermissionUpsertDTO;
+import com.demo.daniel.model.entity.LogOperateType;
 import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.vo.PermissionVO;
 import com.demo.daniel.service.PermissionService;
@@ -28,6 +30,7 @@ public class PermissionController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('permission:add')")
+    @OperateLog(module = "菜单管理", name = "新增菜单(按钮)", type = LogOperateType.ADD)
     public ApiResponse<Void> addPermission(@RequestBody PermissionUpsertDTO request) {
         permissionService.upsertPermission(request);
         return ApiResponse.ok();
@@ -35,6 +38,7 @@ public class PermissionController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('permission:edit')")
+    @OperateLog(module = "菜单管理", name = "编辑菜单(按钮)", type = LogOperateType.EDIT)
     public ApiResponse<Void> updatePermission(@RequestBody PermissionUpsertDTO request) {
         permissionService.upsertPermission(request);
         return ApiResponse.ok();
@@ -48,6 +52,7 @@ public class PermissionController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('permission:delete')")
+    @OperateLog(module = "菜单管理", name = "删除菜单(按钮)", type = LogOperateType.DELETE)
     public ApiResponse<Void> deletePermission(@PathVariable Long id) {
         permissionService.deletePermission(id);
         return ApiResponse.ok();

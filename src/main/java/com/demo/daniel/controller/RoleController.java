@@ -1,9 +1,11 @@
 package com.demo.daniel.controller;
 
+import com.demo.daniel.annotation.OperateLog;
 import com.demo.daniel.convert.RoleConvert;
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.RoleQueryDTO;
 import com.demo.daniel.model.dto.RoleUpsertDTO;
+import com.demo.daniel.model.entity.LogOperateType;
 import com.demo.daniel.model.entity.Role;
 import com.demo.daniel.model.vo.RoleVO;
 import com.demo.daniel.service.RoleService;
@@ -36,6 +38,7 @@ public class RoleController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('role:add')")
+    @OperateLog(module = "角色管理", name = "新增角色", type = LogOperateType.ADD)
     public ApiResponse<Void> createRole(@RequestBody RoleUpsertDTO request) {
         roleService.upsertRole(request);
         return ApiResponse.ok();
@@ -43,6 +46,7 @@ public class RoleController {
 
     @PutMapping
     @PreAuthorize("hasAuthority('role:edit')")
+    @OperateLog(module = "角色管理", name = "编辑角色", type = LogOperateType.EDIT)
     public ApiResponse<Void> updateRole(@RequestBody RoleUpsertDTO request) {
         roleService.upsertRole(request);
         return ApiResponse.ok();
@@ -50,6 +54,7 @@ public class RoleController {
 
     @DeleteMapping
     @PreAuthorize("hasAuthority('role:delete')")
+    @OperateLog(module = "角色管理", name = "删除角色(们)", type = LogOperateType.DELETE)
     public ApiResponse<Void> deleteRoles(@RequestBody List<Long> ids) {
         roleService.deleteRoles(ids);
         return ApiResponse.ok();

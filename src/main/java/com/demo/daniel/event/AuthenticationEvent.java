@@ -1,7 +1,7 @@
 package com.demo.daniel.event;
 
-import com.demo.daniel.model.entity.LogLoginOperationType;
-import com.demo.daniel.model.entity.LogLoginStatusType;
+import com.demo.daniel.model.entity.LogLoginOperation;
+import com.demo.daniel.model.entity.LogStatus;
 import com.demo.daniel.service.LogLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -19,12 +19,12 @@ public class AuthenticationEvent {
     @EventListener
     public void onSuccess(AuthenticationSuccessEvent event) {
         UserDetails user = (UserDetails) event.getAuthentication().getPrincipal();
-        logLoginService.saveLog(user.getUsername(), LogLoginStatusType.SUCCESS, LogLoginOperationType.LOGIN_SUCCESS);
+        logLoginService.saveLog(user.getUsername(), LogStatus.SUCCESS, LogLoginOperation.LOGIN_SUCCESS);
     }
 
     @EventListener
     public void onFailure(AbstractAuthenticationFailureEvent event) {
         String username = String.valueOf(event.getAuthentication().getPrincipal());
-        logLoginService.saveLog(username, LogLoginStatusType.FAILURE, LogLoginOperationType.ACCOUNT_FAILURE);
+        logLoginService.saveLog(username, LogStatus.FAILURE, LogLoginOperation.ACCOUNT_FAILURE);
     }
 }

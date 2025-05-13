@@ -2,8 +2,8 @@ package com.demo.daniel.service;
 
 import com.demo.daniel.model.dto.LogLoginQueryDTO;
 import com.demo.daniel.model.entity.LogLogin;
-import com.demo.daniel.model.entity.LogLoginOperationType;
-import com.demo.daniel.model.entity.LogLoginStatusType;
+import com.demo.daniel.model.entity.LogLoginOperation;
+import com.demo.daniel.model.entity.LogStatus;
 import com.demo.daniel.repository.LogLoginRepository;
 import com.demo.daniel.util.ClientRequestUtils;
 import com.demo.daniel.util.LogLoginSpecifications;
@@ -21,7 +21,7 @@ public class LogLoginService {
     @Autowired
     private LogLoginRepository logLoginRepository;
 
-    public void saveLog(String username, LogLoginStatusType status, LogLoginOperationType operation) {
+    public void saveLog(String username, LogStatus status, LogLoginOperation operation) {
         HttpServletRequest request = ClientRequestUtils.getCurrentRequest();
         String ip = ClientRequestUtils.getClientIp(request);
 
