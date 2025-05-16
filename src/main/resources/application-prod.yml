@@ -14,3 +14,13 @@ spring:
 jwt:
   secret: /YFZnYU4eBc3BCDyHTaEZSD43qBKSrLNssHkTxzgQ5k=
   expiration: 3600000 # 1小时
+
+aws:
+  region: cn-northwest-1
+  access-key: AKIARS2X7EPDZLFULMNH
+  secret-key: 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
+  s3:
+    bucket: cn-red-ana-test-s3-b01
+
+cloud:
+  provider: aws
