@@ -47,7 +47,7 @@ public class FileController {
     @GetMapping("/download/{id}")
     @PreAuthorize("hasAuthority('file:download')")
     @OperateLog(module = "文件管理", name = "下载文件", type = LogOperateType.OTHER)
-    public ResponseEntity<InputStreamResource> download(@PathVariable Long id) {
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id) {
         Attachment attachment = fileService.getFile(id);
         String name = attachment.getName();
         InputStreamResource resource = new InputStreamResource(fileService.downloadFile(name));

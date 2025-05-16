@@ -9,7 +9,16 @@ import org.springframework.stereotype.Component;
 @Data
 public class AliyunProperties {
 
-    private String ossEndpoint;
+    private OSS oss;
+
     private String accessKeyId;
+
     private String secretAccessKey;
+
+    @Data
+    public static class OSS {
+
+        private String endpoint;
+        private String bucket;
+    }
 }

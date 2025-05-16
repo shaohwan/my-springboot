@@ -14,7 +14,7 @@ public class AliyunConfig {
     @Bean
     public OSS ossClient(AliyunProperties aliyunProperties) {
         return new OSSClientBuilder()
-                .build(aliyunProperties.getOssEndpoint(),
+                .build(aliyunProperties.getOss().getEndpoint(),
                         aliyunProperties.getAccessKeyId(),
                         aliyunProperties.getSecretAccessKey());
     }

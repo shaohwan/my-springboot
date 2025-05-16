@@ -23,10 +23,14 @@ aws:
     bucket: cn-red-ana-test-s3-b01
 
 aliyun:
-  oss-endpoint:
-  access-key-id:
-  secret-access-key:
+  oss:
+    endpoint: dummy-endpoint
+    bucket: dummy-bucket
+  access-key-id: dummy-access-key-id
+  secret-access-key: dummy-secret-access-key
+
+local:
+  path: /var/app/files
 
 cloud:
   provider: aws
-

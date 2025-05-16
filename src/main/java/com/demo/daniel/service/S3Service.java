@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static com.demo.daniel.util.AppConstants.S3_BUCKET_PREFIX;
+import static com.demo.daniel.util.AppConstants.FILE_PREFIX;
 
 @Service
 @ConditionalOnProperty(name = "cloud.provider", havingValue = "aws")
@@ -35,7 +35,7 @@ public class S3Service extends FileService {
     public void uploadFile(MultipartFile file) {
         String bucketName = awsProperties.getS3().getBucket();
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        String key = S3_BUCKET_PREFIX + fileName;
+        String key = FILE_PREFIX + fileName;
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -48,18 +48,14 @@ public class S3Service extends FileService {
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), e.getLocalizedMessage());
         }
 
-        Attachment attachment = new Attachment();
-        attachment.setName(fileName);
-        attachment.setUrl(s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(key)).toExternalForm());
-        attachment.setSize(file.getSize());
-        attachment.setPlatform(platform);
-        attachmentRepository.save(attachment);
+        String url = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(key)).toExternalForm();
+        saveFile(fileName, url, file.getSize(), platform);
     }
 
     @Override
     public InputStream downloadFile(String name) {
         String bucketName = awsProperties.getS3().getBucket();
-        String key = S3_BUCKET_PREFIX + name;
+        String key = FILE_PREFIX + name;
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -75,7 +71,7 @@ public class S3Service extends FileService {
             Attachment attachment = getFile(id);
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
-                    .key(S3_BUCKET_PREFIX + attachment.getName())
+                    .key(FILE_PREFIX + attachment.getName())
                     .build();
             s3Client.deleteObject(deleteObjectRequest);
             attachmentRepository.deleteById(id);

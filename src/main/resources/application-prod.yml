@@ -17,10 +17,20 @@ jwt:
 
 aws:
   region: cn-northwest-1
-  access-key: AKIARS2X7EPDZLFULMNH
-  secret-key: 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
+  access-key-id: AKIARS2X7EPDZLFULMNH
+  secret-access-key: xbsmBesyrgQnhkAHq54T0l7Df2AL67mfMVbelOeb
   s3:
     bucket: cn-red-ana-test-s3-b01
+
+aliyun:
+  oss:
+    endpoint: dummy-endpoint
+    bucket: dummy-bucket
+  access-key-id: dummy-access-key-id
+  secret-access-key: dummy-secret-access-key
+
+local:
+  path: /var/app/files
 
 cloud:
   provider: aws

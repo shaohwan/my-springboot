@@ -41,4 +41,13 @@ public abstract class FileService {
     }
 
     public abstract void deleteFiles(List<Long> ids);
+
+    protected void saveFile(String fileName, String url, Long size, String platform) {
+        Attachment attachment = new Attachment();
+        attachment.setName(fileName);
+        attachment.setUrl(url);
+        attachment.setSize(size);
+        attachment.setPlatform(platform);
+        attachmentRepository.save(attachment);
+    }
 }
