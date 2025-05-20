@@ -62,6 +62,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
+    @OperateLog(module = "用户管理", name = "修改密码", type = LogOperateType.EDIT)
     public ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordDTO request) {
         userService.updatePassword(request);
         return ApiResponse.ok();
