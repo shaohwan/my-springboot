@@ -17,16 +17,17 @@ public enum ErrorCode {
     USERNAME_EXISTS(1003, "用户名已存在"),
     USER_IS_LOGIN(1004, "用户已经登录"),
     USER_DISABLED(1005, "用户被禁用"),
+    OLD_PASSWORD_INCORRECT(1006, "原密码错误"),
 
-    ROLE_NOT_EXIST(1006, "角色不存在"),
-    ROLE_IN_USE(1007, "角色正被使用"),
+    ROLE_NOT_EXIST(1007, "角色不存在"),
+    ROLE_IN_USE(1008, "角色正被使用"),
 
-    PERMISSION_NOT_EXIST(1008, "权限不存在"),
-    PERMISSION_IN_USE(1009, "权限正被使用"),
+    PERMISSION_NOT_EXIST(1009, "权限不存在"),
+    PERMISSION_IN_USE(1010, "权限正被使用"),
 
-    LOG_OPERATE_NOT_EXIST(1010, "操作日志不存在"),
+    LOG_OPERATE_NOT_EXIST(1011, "操作日志不存在"),
 
-    FILE_NOT_EXIST(1011, "文件不存在");
+    FILE_NOT_EXIST(1012, "文件不存在");
 
     private final int code;
     private final String message;

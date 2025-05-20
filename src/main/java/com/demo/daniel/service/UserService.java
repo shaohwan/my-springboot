@@ -3,6 +3,7 @@ package com.demo.daniel.service;
 import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
+import com.demo.daniel.model.dto.UpdatePasswordDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.Permission;
@@ -94,5 +95,21 @@ public class UserService {
             return sp.map(Permission::getCode).filter(StringUtils::isNotEmpty).collect(Collectors.toSet());
         }).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode()
                 , "User Name " + username + " not found"));
+    }
+
+    public void updatePassword(UpdatePasswordDTO request) {
+        String encodeNewPwd = passwordEncoder.encode(request.getNewPassword());
+
+        userRepository.findByUsername(request.getUsername()).ifPresentOrElse(user -> {
+            if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+                throw new BusinessException(ErrorCode.OLD_PASSWORD_INCORRECT.getCode(), ErrorCode.OLD_PASSWORD_INCORRECT.getMessage());
+            } else {
+                user.setPassword(encodeNewPwd);
+                userRepository.save(user);
+            }
+        }, () -> {
+            throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(),
+                    "User Name " + request.getUsername() + " not found");
+        });
     }
 }

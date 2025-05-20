@@ -3,6 +3,7 @@ package com.demo.daniel.controller;
 import com.demo.daniel.annotation.OperateLog;
 import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.model.ApiResponse;
+import com.demo.daniel.model.dto.UpdatePasswordDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.LogOperateType;
@@ -57,6 +58,12 @@ public class UserController {
     @OperateLog(module = "用户管理", name = "删除用户(们)", type = LogOperateType.DELETE)
     public ApiResponse<Void> deleteUsers(@RequestBody List<Long> ids) {
         userService.deleteUsers(ids);
+        return ApiResponse.ok();
+    }
+
+    @PutMapping("/password")
+    public ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordDTO request) {
+        userService.updatePassword(request);
         return ApiResponse.ok();
     }
 }
