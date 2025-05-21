@@ -4,6 +4,7 @@ import com.demo.daniel.annotation.OperateLog;
 import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.model.ApiResponse;
 import com.demo.daniel.model.dto.UpdatePasswordDTO;
+import com.demo.daniel.model.dto.UserProfileDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.LogOperateType;
@@ -37,6 +38,12 @@ public class UserController {
         return ApiResponse.ok(UserConvert.convertToVO(user));
     }
 
+    @GetMapping("/profile")
+    public ApiResponse<UserVO> getProfile(@RequestParam String username) {
+        User user = userService.getProfile(username);
+        return ApiResponse.ok(UserConvert.convertToVO(user));
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('user:add')")
     @OperateLog(module = "用户管理", name = "新增用户", type = LogOperateType.ADD)
@@ -65,6 +72,13 @@ public class UserController {
     @OperateLog(module = "用户管理", name = "修改密码", type = LogOperateType.EDIT)
     public ApiResponse<Void> updatePassword(@RequestBody UpdatePasswordDTO request) {
         userService.updatePassword(request);
+        return ApiResponse.ok();
+    }
+
+    @PutMapping("/profile")
+    @OperateLog(module = "用户管理", name = "修改个人信息", type = LogOperateType.EDIT)
+    public ApiResponse<Void> updateProfile(@RequestBody UserProfileDTO request) {
+        userService.updateProfile(request);
         return ApiResponse.ok();
     }
 }

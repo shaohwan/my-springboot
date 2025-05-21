@@ -4,6 +4,7 @@ import com.demo.daniel.convert.UserConvert;
 import com.demo.daniel.exception.BusinessException;
 import com.demo.daniel.model.ErrorCode;
 import com.demo.daniel.model.dto.UpdatePasswordDTO;
+import com.demo.daniel.model.dto.UserProfileDTO;
 import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.Permission;
@@ -41,6 +42,11 @@ public class UserService {
     public User getUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User ID " + id + " not found"));
+    }
+
+    public User getProfile(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(), "User Name " + username + " not found"));
     }
 
     public Page<User> getUsers(UserQueryDTO request) {
@@ -107,6 +113,18 @@ public class UserService {
                 user.setPassword(encodeNewPwd);
                 userRepository.save(user);
             }
+        }, () -> {
+            throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(),
+                    "User Name " + request.getUsername() + " not found");
+        });
+    }
+
+    public void updateProfile(UserProfileDTO request) {
+        userRepository.findByUsername(request.getUsername()).ifPresentOrElse(user -> {
+            user.setRealName(request.getRealName());
+            user.setPhone(request.getPhone());
+            user.setEmail(request.getEmail());
+            userRepository.save(user);
         }, () -> {
             throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(),
                     "User Name " + request.getUsername() + " not found");
