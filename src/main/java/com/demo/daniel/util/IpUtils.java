@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @UtilityClass
 @Slf4j
-public class ClientRequestUtils {
+public class IpUtils {
 
     private static Searcher ip2regionSearcher;
 

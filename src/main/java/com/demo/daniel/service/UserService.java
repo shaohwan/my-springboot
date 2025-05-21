@@ -9,9 +9,12 @@ import com.demo.daniel.model.dto.UserQueryDTO;
 import com.demo.daniel.model.dto.UserUpsertDTO;
 import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.User;
+import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.repository.PermissionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
+import com.demo.daniel.util.AppConstants;
+import com.demo.daniel.util.ExcelUtils;
 import com.demo.daniel.util.UserSpecifications;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,5 +132,10 @@ public class UserService {
             throw new BusinessException(ErrorCode.USER_NOT_EXIST.getCode(),
                     "User Name " + request.getUsername() + " not found");
         });
+    }
+
+    public void exportUsers() {
+        List<UserVO> users = userRepository.findAll().stream().map(UserConvert::convertToVO).collect(Collectors.toList());
+        ExcelUtils.exportExcel(users, AppConstants.USER_EXCEL, null, UserVO.class);
     }
 }

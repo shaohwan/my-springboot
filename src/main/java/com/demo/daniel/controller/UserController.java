@@ -81,4 +81,11 @@ public class UserController {
         userService.updateProfile(request);
         return ApiResponse.ok();
     }
+
+    @GetMapping("/export")
+    @PreAuthorize("hasAuthority('user:export')")
+    @OperateLog(module = "用户管理", name = "导出", type = LogOperateType.OTHER)
+    public void exportUsers() {
+        userService.exportUsers();
+    }
 }

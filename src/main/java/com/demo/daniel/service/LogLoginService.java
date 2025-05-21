@@ -5,7 +5,8 @@ import com.demo.daniel.model.entity.LogLogin;
 import com.demo.daniel.model.entity.LogLoginOperation;
 import com.demo.daniel.model.entity.LogStatus;
 import com.demo.daniel.repository.LogLoginRepository;
-import com.demo.daniel.util.ClientRequestUtils;
+import com.demo.daniel.util.HttpContextUtils;
+import com.demo.daniel.util.IpUtils;
 import com.demo.daniel.util.LogLoginSpecifications;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,14 @@ public class LogLoginService {
     private LogLoginRepository logLoginRepository;
 
     public void saveLog(String username, LogStatus status, LogLoginOperation operation) {
-        HttpServletRequest request = ClientRequestUtils.getCurrentRequest();
-        String ip = ClientRequestUtils.getClientIp(request);
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        String ip = IpUtils.getClientIp(request);
 
         LogLogin log = new LogLogin();
         log.setUsername(username);
         log.setIp(ip);
-        log.setAddress(ClientRequestUtils.getLocationByIp(ip));
-        log.setUserAgent(ClientRequestUtils.getUserAgent(request));
+        log.setAddress(IpUtils.getLocationByIp(ip));
+        log.setUserAgent(IpUtils.getUserAgent(request));
         log.setStatus(status);
         log.setOperation(operation);
 

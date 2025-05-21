@@ -5,7 +5,7 @@ import com.demo.daniel.model.entity.LogOperate;
 import com.demo.daniel.model.entity.LogOperateType;
 import com.demo.daniel.model.entity.LogStatus;
 import com.demo.daniel.repository.LogOperateRepository;
-import com.demo.daniel.util.ClientRequestUtils;
+import com.demo.daniel.util.IpUtils;
 import com.demo.daniel.util.JsonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,8 @@ public class LogOperateAspect {
     public Object logOperation(ProceedingJoinPoint joinPoint, OperateLog operateLog) throws Throwable {
         StopWatch stopwatch = StopWatch.createStarted();
         String username = String.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        HttpServletRequest request = ClientRequestUtils.getCurrentRequest();
-        String ip = ClientRequestUtils.getClientIp(request);
+        HttpServletRequest request = IpUtils.getCurrentRequest();
+        String ip = IpUtils.getClientIp(request);
 
         LogOperate logOperate = new LogOperate();
         logOperate.setModule(operateLog.module());
@@ -48,8 +48,8 @@ public class LogOperateAspect {
         logOperate.setCreateTime(LocalDateTime.now());
         logOperate.setUsername(username);
         logOperate.setIp(ip);
-        logOperate.setAddress(ClientRequestUtils.getLocationByIp(ip));
-        logOperate.setUserAgent(ClientRequestUtils.getUserAgent(request));
+        logOperate.setAddress(IpUtils.getLocationByIp(ip));
+        logOperate.setUserAgent(IpUtils.getUserAgent(request));
         logOperate.setRequestUri(request.getRequestURI());
         logOperate.setRequestMethod(request.getMethod());
         logOperate.setRequestParameters(getRequestParameters(request, joinPoint));
