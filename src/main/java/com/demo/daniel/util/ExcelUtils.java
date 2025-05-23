@@ -22,11 +22,11 @@ public class ExcelUtils {
         HttpServletResponse response = HttpContextUtils.getHttpServletResponse();
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("utf-8");
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         String fullFileName = fileName + "_" + timestamp + ".xlsx";
-        String encodedFileName = URLEncoder.encode(fullFileName, StandardCharsets.UTF_8).replace("+", "%20");
-        response.setHeader("Content-disposition", "attachment;filename=" + encodedFileName);
+        String encodedFileName = URLEncoder.encode(fullFileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("Content-Disposition", "attachment;filename*=utf-8''" + encodedFileName);
 
         try {
             ExcelWriterSheetBuilder writerBuilder = EasyExcel.write(response.getOutputStream(), clazz)

@@ -11,15 +11,12 @@ import com.demo.daniel.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -51,15 +48,8 @@ public class FileController {
         Attachment attachment = fileService.getFile(id);
         String name = attachment.getName();
         InputStreamResource resource = new InputStreamResource(fileService.downloadFile(name));
-        // Encode filename for Content-Disposition (RFC 5987)
-        String encodedFilename = URLEncoder.encode(name, StandardCharsets.UTF_8)
-                .replace("+", "%20"); // Replace '+' with '%20' for spaces
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encodedFilename);
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
