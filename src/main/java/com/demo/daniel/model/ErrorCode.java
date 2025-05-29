@@ -27,7 +27,9 @@ public enum ErrorCode {
 
     LOG_OPERATE_NOT_EXIST(1011, "操作日志不存在"),
 
-    FILE_NOT_EXIST(1012, "文件不存在");
+    FILE_NOT_EXIST(1012, "文件不存在"),
+
+    JOB_LOG_NOT_EXIST(1013, "任务日志不存在");
 
     private final int code;
     private final String message;

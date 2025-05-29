@@ -10,6 +10,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
 
 jwt:
   secret: /YFZnYU4eBc3BCDyHTaEZSD43qBKSrLNssHkTxzgQ5k=
