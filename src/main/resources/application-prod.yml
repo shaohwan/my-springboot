@@ -10,6 +10,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: localhost
+    port: 6379
+    database: 2
+    # password:
   quartz:
     job-store-type: jdbc
     jdbc:
