@@ -24,4 +24,6 @@ public class UserUpsertDTO {
     private Boolean enabled;
 
     private List<Long> roleIds;
+
+    private List<Long> positionIds;
 }

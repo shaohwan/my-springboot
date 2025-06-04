@@ -7,6 +7,7 @@ import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import com.demo.daniel.model.entity.Position;
 import com.demo.daniel.model.entity.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -52,6 +53,9 @@ public class UserVO {
 
     @ExcelProperty(value = "角色", index = 8, converter = RolesConverter.class)
     private Set<Role> roles = new HashSet<>();
+
+    @ExcelProperty(value = "岗位", index = 9, converter = PositionsConverter.class)
+    private Set<Position> positions = new HashSet<>();
 
     public static class EnabledConverter implements Converter<Boolean> {
         @Override
@@ -107,6 +111,29 @@ public class UserVO {
                     .map(role -> role.getName() != null ? role.getName() : "未知角色")
                     .collect(Collectors.joining(", "));
             return new WriteCellData<>(rolesStr);
+        }
+    }
+
+    public static class PositionsConverter implements Converter<Set<Position>> {
+        @Override
+        public Class<?> supportJavaTypeKey() {
+            return Set.class;
+        }
+
+        @Override
+        public CellDataTypeEnum supportExcelTypeKey() {
+            return CellDataTypeEnum.STRING;
+        }
+
+        @Override
+        public WriteCellData<?> convertToExcelData(Set<Position> value, ExcelContentProperty property, GlobalConfiguration globalConfiguration) {
+            if (value == null || value.isEmpty()) {
+                return new WriteCellData<>("无岗位");
+            }
+            String positionsStr = value.stream()
+                    .map(position -> position.getName() != null ? position.getName() : "未知岗位")
+                    .collect(Collectors.joining(", "));
+            return new WriteCellData<>(positionsStr);
         }
     }
 }

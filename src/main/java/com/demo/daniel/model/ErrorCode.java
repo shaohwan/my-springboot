@@ -29,7 +29,10 @@ public enum ErrorCode {
 
     FILE_NOT_EXIST(1012, "文件不存在"),
 
-    JOB_LOG_NOT_EXIST(1013, "任务日志不存在");
+    JOB_LOG_NOT_EXIST(1013, "任务日志不存在"),
+
+    POSITION_NOT_EXIST(1014, "岗位不存在"),
+    POSITION_IN_USE(1015, "岗位正被使用");
 
     private final int code;
     private final String message;

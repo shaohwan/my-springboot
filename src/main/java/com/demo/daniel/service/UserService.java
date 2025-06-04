@@ -11,6 +11,7 @@ import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.User;
 import com.demo.daniel.model.vo.UserVO;
 import com.demo.daniel.repository.PermissionRepository;
+import com.demo.daniel.repository.PositionRepository;
 import com.demo.daniel.repository.RoleRepository;
 import com.demo.daniel.repository.UserRepository;
 import com.demo.daniel.util.AppConstants;
@@ -37,6 +38,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PositionRepository positionRepository;
     @Autowired
     private PermissionRepository permissionRepository;
     @Autowired
@@ -70,6 +73,10 @@ public class UserService {
 
         user.setRoles(Optional.ofNullable(request.getRoleIds())
                 .map(roleIds -> new HashSet<>(roleRepository.findAllById(roleIds)))
+                .orElseGet(HashSet::new));
+
+        user.setPositions(Optional.ofNullable(request.getPositionIds())
+                .map(positionIds -> new HashSet<>(positionRepository.findAllById(positionIds)))
                 .orElseGet(HashSet::new));
 
         userRepository.save(user);
