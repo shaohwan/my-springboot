@@ -18,4 +18,6 @@ public class AppConstants {
     public static final String LOG_LOGIN_EXCEL = "log_Login_excel";
 
     public static final String DEFAULT_SHEET_NAME = "sheet1";
+
+    public static final String BAR = "bar";
 }
