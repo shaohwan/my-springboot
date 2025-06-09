@@ -41,7 +41,7 @@ public class LogLoginService {
     }
 
     public Page<LogLogin> getLogs(LogLoginQueryDTO request) {
-        Specification<LogLogin> spec = LogLoginSpecifications.buildSpecification(request.getUsername());
+        Specification<LogLogin> spec = LogLoginSpecifications.buildSpecification(request.getUsername(), request.getStartTime(), request.getEndTime());
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
         return logLoginRepository.findAll(spec, PageRequest.of(request.getPage(), request.getSize(), sort));
     }

@@ -8,4 +8,8 @@ import lombok.EqualsAndHashCode;
 public class LogLoginQueryDTO extends PageQuery {
 
     private String username;
+
+    private String startTime;
+
+    private String endTime;
 }

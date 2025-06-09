@@ -23,7 +23,6 @@ public class ChartController {
 
     @GetMapping
     public ApiResponse<ChartVO> getChart(@RequestParam("chartId") int chartId) {
-        new ChartVO();
         ChartVO chart = switch (chartId) {
             case 1 -> chartLogOperateService.getDailyUserOperateCounts();
             case 2 -> chartLogLoginService.getDailyUserLoginCounts();
