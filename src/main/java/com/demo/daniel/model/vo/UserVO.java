@@ -7,8 +7,6 @@ import com.alibaba.excel.enums.CellDataTypeEnum;
 import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
-import com.demo.daniel.model.entity.Position;
-import com.demo.daniel.model.entity.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -91,7 +89,7 @@ public class UserVO {
         }
     }
 
-    public static class RolesConverter implements Converter<Set<Role>> {
+    public static class RolesConverter implements Converter<Set<RoleVO>> {
         @Override
         public Class<?> supportJavaTypeKey() {
             return Set.class;
@@ -103,7 +101,7 @@ public class UserVO {
         }
 
         @Override
-        public WriteCellData<?> convertToExcelData(Set<Role> value, ExcelContentProperty property, GlobalConfiguration globalConfiguration) {
+        public WriteCellData<?> convertToExcelData(Set<RoleVO> value, ExcelContentProperty property, GlobalConfiguration globalConfiguration) {
             if (value == null || value.isEmpty()) {
                 return new WriteCellData<>("无角色");
             }
@@ -114,7 +112,7 @@ public class UserVO {
         }
     }
 
-    public static class PositionsConverter implements Converter<Set<Position>> {
+    public static class PositionsConverter implements Converter<Set<PositionVO>> {
         @Override
         public Class<?> supportJavaTypeKey() {
             return Set.class;
@@ -126,7 +124,7 @@ public class UserVO {
         }
 
         @Override
-        public WriteCellData<?> convertToExcelData(Set<Position> value, ExcelContentProperty property, GlobalConfiguration globalConfiguration) {
+        public WriteCellData<?> convertToExcelData(Set<PositionVO> value, ExcelContentProperty property, GlobalConfiguration globalConfiguration) {
             if (value == null || value.isEmpty()) {
                 return new WriteCellData<>("无岗位");
             }

@@ -20,4 +20,6 @@ public class AppConstants {
     public static final String DEFAULT_SHEET_NAME = "sheet1";
 
     public static final String BAR = "bar";
+
+    public static final Integer RESULT_MESSAGE_LENGTH_LIMIT = 255;
 }

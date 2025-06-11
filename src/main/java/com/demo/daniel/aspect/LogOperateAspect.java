@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static com.demo.daniel.util.AppConstants.RESULT_MESSAGE_LENGTH_LIMIT;
+
 @Slf4j
 @Aspect
 @Component
@@ -60,10 +62,11 @@ public class LogOperateAspect {
             logOperate.setStatus(LogStatus.SUCCESS);
             logOperate.setResultMessage("Operation successful");
             return result;
-        } catch (Throwable throwable) {
+        } catch (Throwable cause) {
             logOperate.setStatus(LogStatus.FAILURE);
-            logOperate.setResultMessage(throwable.getMessage());
-            throw throwable;
+            logOperate.setResultMessage(cause.getMessage().length() > RESULT_MESSAGE_LENGTH_LIMIT
+                    ? cause.getMessage().substring(0, RESULT_MESSAGE_LENGTH_LIMIT) : cause.getMessage());
+            throw cause;
         } finally {
             // Set duration
             stopwatch.stop();
