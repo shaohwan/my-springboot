@@ -52,10 +52,10 @@ public class UserVO {
     private LocalDateTime createTime;
 
     @ExcelProperty(value = "角色", index = 8, converter = RolesConverter.class)
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleVO> roles = new HashSet<>();
 
     @ExcelProperty(value = "岗位", index = 9, converter = PositionsConverter.class)
-    private Set<Position> positions = new HashSet<>();
+    private Set<PositionVO> positions = new HashSet<>();
 
     public static class EnabledConverter implements Converter<Boolean> {
         @Override

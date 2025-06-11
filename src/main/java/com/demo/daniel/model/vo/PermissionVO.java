@@ -1,6 +1,5 @@
 package com.demo.daniel.model.vo;
 
-import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.entity.PermissionType;
 import lombok.Data;
 
@@ -23,7 +22,7 @@ public class PermissionVO {
 
     private Long parentId;
 
-    private List<Permission> children;
+    private List<PermissionVO> children;
 
     private Integer orderNum;
 }

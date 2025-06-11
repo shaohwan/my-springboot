@@ -5,7 +5,9 @@ import com.demo.daniel.model.entity.Permission;
 import com.demo.daniel.model.vo.PermissionVO;
 import org.springframework.beans.BeanUtils;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PermissionConvert {
 
@@ -15,7 +17,13 @@ public class PermissionConvert {
     public static PermissionVO convertToVO(Permission permission) {
         PermissionVO permissionVO = new PermissionVO();
         BeanUtils.copyProperties(permission, permissionVO);
+
         permissionVO.setParentId(Optional.ofNullable(permission.getParent()).map(Permission::getId).orElse(null));
+
+        List<PermissionVO> children = permission.getChildren().stream()
+                .map(PermissionConvert::convertToVO)
+                .collect(Collectors.toList());
+        permissionVO.setChildren(children);
         return permissionVO;
     }
 
