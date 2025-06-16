@@ -34,7 +34,7 @@ public class PositionService {
 
     public Position getPosition(Long id) {
         return positionRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.POSITION_IN_USE.getCode(), "Position ID " + id + " not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.POSITION_NOT_EXIST.getCode(), "Position ID " + id + " not found"));
     }
 
     public void upsertPosition(PositionUpsertDTO request) {
