@@ -1,0 +1,7 @@
+security:
+  permit-all-paths:
+    - /api/auth/login
+    - /api/auth/refresh
+    - /api/auth/logout
+    - /actuator/**
+    - /druid/**

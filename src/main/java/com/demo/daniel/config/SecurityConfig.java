@@ -1,6 +1,7 @@
 package com.demo.daniel.config;
 
 import com.demo.daniel.filter.JwtAuthenticationFilter;
+import com.demo.daniel.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    private SecurityProperties securityProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -34,7 +37,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/logout", "/actuator/**", "/druid/**").permitAll()
+                        .requestMatchers(securityProperties.getPermitAllPaths().toArray(new String[0])).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()// 登录、刷新、登出接口允许匿名访问
                         .anyRequest().authenticated() // 其他所有请求需要认证
                 )

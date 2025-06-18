@@ -10,7 +10,7 @@ spring:
         url-pattern: /druid/*
         login-username: admin
         login-password: admin
-        allow: 127.0.0.1,localhost
+        allow: 127.0.0.1
       web-stat-filter:
         enabled: true
         url-pattern: /*
@@ -31,6 +31,9 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: always
+  config:
+    import:
+      - classpath:security-config.yml
 
 jwt:
   secret: /YFZnYU4eBc3BCDyHTaEZSD43qBKSrLNssHkTxzgQ5k=

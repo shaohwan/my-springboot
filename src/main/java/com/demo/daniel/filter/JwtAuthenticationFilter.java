@@ -2,6 +2,7 @@ package com.demo.daniel.filter;
 
 import com.demo.daniel.exception.AuthException;
 import com.demo.daniel.model.ErrorCode;
+import com.demo.daniel.properties.SecurityProperties;
 import com.demo.daniel.service.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -19,19 +20,21 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final Set<String> skipUrls = new HashSet<>(List.of("/api/auth/login", "/api/auth/refresh", "/api/auth/logout"));
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    private SecurityProperties securityProperties;
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
-        return skipUrls.stream().anyMatch(p -> new AntPathMatcher().match(p, request.getServletPath()));
+        return securityProperties.getPermitAllPaths().stream().anyMatch(p -> new AntPathMatcher().match(p, request.getServletPath()));
     }
 
     @Override
