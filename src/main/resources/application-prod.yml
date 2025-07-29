@@ -53,8 +53,11 @@ aliyun:
   access-key-id: dummy-access-key-id
   secret-access-key: dummy-secret-access-key
 
-local:
-  path: /var/app/files
+minio:
+  bucket: my-bucket
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin123
 
 cloud:
   provider: aws

@@ -5,9 +5,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "local")
+@ConfigurationProperties(prefix = "minio")
 @Data
-public class LocalProperties {
+public class MinioProperties {
 
-    private String path;
+    private String bucket;
+
+    private String endpoint;
+
+    private String accessKey;
+
+    private String secretKey;
 }
