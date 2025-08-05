@@ -5,3 +5,6 @@ security:
     - /api/auth/logout
     - /actuator/**
     - /druid/**
+    - /swagger-ui.html
+    - /swagger-ui/**
+    - /v3/api-docs/**
